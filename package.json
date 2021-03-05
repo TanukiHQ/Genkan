@@ -1,0 +1,24 @@
+{
+  "name": "genkan",
+  "version": "0.1.0",
+  "description": "No nonsense authentication system using MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HakkouHQ/Genkan.git"
+  },
+  "keywords": [
+    "auth",
+    "login",
+    "mongodb"
+  ],
+  "author": "HakkouApp",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/HakkouHQ/Genkan/issues"
+  },
+  "homepage": "https://github.com/HakkouHQ/Genkan#readme"
+}
