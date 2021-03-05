@@ -1,0 +1,29 @@
+<div id="recoveryEmailInput">
+    <p class="subtitle is-6 has-text-weight-bold has-text-centered">Request password reset link</p>
+    <form id="recoveryEmailForm">
+        <div class="field">
+            <div class="control has-icons-left has-icons-right">
+                <input id="email" class="input" type="text" placeholder="Existing Email">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+            </div>
+        </div>
+        <button class="button is-primary is-fullwidth">
+            <span class="icon is-small">
+                <i class="fas fa-paper-plane"></i>
+            </span>
+            <span>Send recovery link</span>
+        </button>
+    </form>
+    <hr>
+    <div class="has-text-centered">
+        <a class="has-text-primary" data-pjax='main' href="/login"><i class="fas fa-long-arrow-alt-left"></i> Return to login</a>
+    </div>
+</div>
+
+<div id="resetPasswordAck" style="display: none;">
+    <h2 class="title is-3">Email sent</h2>
+    <p>You will receive an email containing the
+        password reset link if the email exists in our records.</p>
+</div>

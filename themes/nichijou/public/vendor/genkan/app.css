@@ -1,0 +1,73 @@
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+    margin: 0 auto;
+    max-width: 475px;
+}
+
+html {
+    background: #FAFBFC;
+    background-size: cover;
+    height: 100%;
+}
+
+img#logo-id {
+    height: 3.5rem;
+    margin-bottom: 3rem;
+}
+
+.logo-container {
+    margin-top: 5rem
+}
+
+img.logo {
+    height: 3em
+}
+
+.box {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px
+}
+
+div#main {
+    margin-top: 1vh;
+    padding: 2.3rem;
+}
+
+div.field {
+    margin-top: 1rem
+}
+
+div.showPasswordContainer {
+    margin-top: 0.8rem
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    div#login-box, div#message-box {
+        margin-top: 10vh;
+        padding: 0;
+    }
+    html {
+        background: #fff;
+        background-size: cover;
+        height: 100%;
+    }
+    .box {
+        box-shadow: none !important
+    }
+}

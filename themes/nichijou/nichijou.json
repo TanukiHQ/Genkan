@@ -1,0 +1,11 @@
+{
+    "name": "Nichijou 日常",
+    "version": "2.0.0",
+    "author": "Dylan Kok",
+    "repository": "https://github.com/Miyakosuru/nichijou",
+    "paths": {
+        "assets": "public",
+        "templates": "views",
+        "mail": "mail"
+    }
+}

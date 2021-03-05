@@ -1,0 +1,42 @@
+<div id="dashboard-email">
+    <p class="subtitle is-6 has-text-weight-bold has-text-centered">Change email address</p>
+    <div id="emailNotValid" class="notification is-danger" style="display: none;">
+        Email address doesn't seem to be valid.
+    </div>
+    <div id="badPass" class="notification is-danger" style="display: none;">
+        Password does not match our records
+    </div>
+    <form id="changeEmailForm">
+        <div class="field">
+            <div class="control has-icons-left has-icons-right">
+                <input id="email" class="input" type="text" placeholder="New Email">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+            </div>
+        </div>
+        <div class="field">
+            <div class="control has-icons-left has-icons-right">
+                <input id="password" class="input" type="text" placeholder="Password">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+            </div>
+        </div>
+        <button id="changeAddressBtn" class="button is-primary is-fullwidth">
+            <span class="icon is-small">
+                <i class="fas fa-edit"></i>
+            </span>
+            <span>Change address</span>
+        </button>
+    </form>
+    <hr>
+    <div class="has-text-centered">
+        <a class="has-text-primary" data-pjax='main' href="/"><i class="fas fa-long-arrow-alt-left"></i> Back</a>
+    </div>
+</div>
+
+<div id="sentAck" style="display: none;">
+    <h2 class="title is-3">Done</h2>
+    <p>Your email has been updated.</p>
+</div>
