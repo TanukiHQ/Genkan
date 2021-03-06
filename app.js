@@ -155,16 +155,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         })
     })
 
-    app.get('*', (req, res) => {
-        var metadata = {
-            meta: {
-                title: "404",
-                path: false
-            },
-            nav: {}
-        }
-        res.status = 404
-        res.render('404', metadata)
     })
 
     server.listen(process.env.WEBSERVER_PORT, function (err) {
