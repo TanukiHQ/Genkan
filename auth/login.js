@@ -57,11 +57,13 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             // Compare whether incoming is the same as stored
             if (bcrypt.compareSync(incomingHashedPasswordSHA512, result[0].password)) {
 
+                var sid = tokenGenerator()
+
                 // Payload to update database with
                 const SessionPayload = {
                     $push: {
                         sessions: {
-                            sid: tokenGenerator(),
+                            sid: sid,
                             timestamp: new Date()
                         }
                     },
@@ -76,7 +78,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
                 })
             } else {
                 // If account details are invalid, reject
-                return callback(false)
+                return callback(sid)
             }
         })
     }

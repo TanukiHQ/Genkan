@@ -18,7 +18,6 @@ app.use(compression({
 // app.use(minify({
 //     cache: 'cache',
 // }))
-// app.use(cookieParser())
 
 // Socket.io -- Optional
 const server = require('http').Server(app)
@@ -83,6 +82,7 @@ app.use(minify({
 }))
 app.use(compression())
 
+app.use(cookieParser(process.env.SECRET_KEY))
 
 app.get('/signup', (req, res) => {
     res.render('signup')
@@ -121,6 +121,7 @@ app.post('/login', (req, res) => {
         }
 
         log.info("Login OK")
+        res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain:`.${process.env.DOMAIN}`  });
         return res.render('login', { "result": { "loginSuccess": true } })
     })
 })
