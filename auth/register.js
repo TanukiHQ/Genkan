@@ -39,6 +39,16 @@ const saltRounds = 10;
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
 
+// NodeMailer
+const nodemailer = require('nodemailer')
+const transporter = nodemailer.createTransport({
+    host: 'smtp.sendgrid.net',
+    port: 587,
+    auth: {
+        user: 'apikey',
+        pass: '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'
+    }
+});
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     const db = client.db(dbName)
     newAccount = (email, password, callback) => {
