@@ -27,6 +27,8 @@ const server = require('http').Server(app)
 const uuid = require('uuid')
 const sha512 = require('hash-anything').sha512
 const sha256 = require('hash-anything').sha256
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 // MongoDB  -- Optional
 const MongoClient = require('mongodb').MongoClient
