@@ -9,10 +9,10 @@
     <div id="emailDuplicate" class="notification is-danger" style="display: none;">
         Email is already attached to an existing account.
     </div>
-    <form id="signupForm">
+    <form method="POST">
         <div class="field">
             <div class="control has-icons-left has-icons-right">
-                <input id="registerEmail" class="input" type="text" placeholder="Email">
+                <input name="email" class="input" type="text" placeholder="Email">
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -20,7 +20,7 @@
         </div>
         <div class="field">
             <div class="control has-icons-left has-icons-right">
-                <input id="registerPassword" class="input" type="password" placeholder="Password">
+                <input name="password" class="input" type="password" placeholder="Password">
                 <span class="icon is-small is-left">
                     <i class="fas fa-key"></i>
                 </span>

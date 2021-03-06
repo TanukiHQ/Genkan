@@ -6,10 +6,10 @@
     <div id="badLogin" class="notification is-danger" style="display: none;">
         Email or password is invalid.
     </div>
-    <form id="loginForm">
+    <form method="POST">
         <div class="field">
             <div class="control has-icons-left has-icons-right">
-                <input id="loginEmail" class="input" type="text" placeholder="Email">
+                <input name="email" class="input" type="text" placeholder="Email">
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
@@ -17,7 +17,7 @@
         </div>
         <div class="field">
             <div class="control has-icons-left has-icons-right">
-                <input id="loginPassword" class="input" type="password" placeholder="Password">
+                <input name="password" class="input" type="password" placeholder="Password">
                 <span class="icon is-small is-left">
                     <i class="fas fa-key"></i>
                 </span>
