@@ -120,6 +120,52 @@ app.use(compression())
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
+
+app.get('/signup', (req, res) => {
+    res.render('signup')
+})
+
+app.post('/signup', (req, res) => {
+    var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+    var password = req.fields.password
+
+    // Data validations
+    if (emailRegex.test(email) === false || password.length < 8) return
+
+    newAccount(email, password, result => {
+        if (result === false) {
+            log.info("Duplicate account")
+            return res.render('signup', { "result": { "errDuplicateEmail": true } })
+        }
+
+        log.info("New Account OK")
+        return res.render('signup', { "result": { "accountCreationSuccess": true } })
+    })
+})
+
+app.get('/login', (req, res) => {
+    res.render('login')
+})
+
+app.post('/login', (req, res) => {
+    var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+    var password = req.fields.password
+
+    loginAccount(email, password, result => {
+        if (result === false) {
+            log.info("Failed to login")
+            return res.render('login', { "result": { "errCredentialsInvalid": true } })
+        }
+
+        log.info("Login OK")
+        return res.render('login', { "result": { "loginSuccess": true } })
+    })
+})
+
+server.listen(process.env.WEBSERVER_PORT, function (err) {
+    log.debug(`Web server & Socket.io listening on port ${process.env.WEBSERVER_PORT}.`)
+})
+
 // For MongoDB requirement
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     if (err) {
@@ -130,91 +176,53 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     log.info("Connection with MongoDB successful.")
     const db = client.db(dbName)
 
-    app.get('/signup', (req, res) => {
-        res.render('signup')
-    })
-
-    app.post('/signup', (req, res) => {
-        var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
-        var password = req.fields.password
-
-        // Data validations
-        if (emailRegex.test(email) === false || password.length < 8) return
-
-        // Check whether account exists
+    newAccount = (email, password, callback) => {
+        // Check for duplicate accounts
         findDB(db, "users", { "email": email }, result => {
+            // Reject if duplicate
             if (result.length !== 0) {
-                log.info("Duplicate account")
-                return res.render('signup', { "result": { "errDuplicateEmail": true } })
+                return callback(false)
             }
 
-            newAccount(email, password, result => {
-                log.info("New Account OK")
-                return res.render('signup', { "result": { "accountCreationSuccess": true } })
+            // SHA512 Hashing
+            var hashedPasswordSHA512 = sha512({
+                a: password,
+                b: email
             })
-        })
-    })
 
-    app.get('/login', (req, res) => {
-        res.render('login')
-    })
+            // Bcrypt Hashing
+            var hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
 
-    app.post('/login', (req, res) => {
-        var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
-        var password = req.fields.password
+            // Generate email confirmation token
+            var emailConfirmationToken = tokenGenerator()
 
-        loginAccount(email, password, result => {
-            if (result === false) {
-                log.info("Failed to login")
-                return res.render('login', { "result": { "errCredentialsInvalid": true } })
-            } 
-
-            log.info("Login OK")
-            return res.render('login', { "result": { "loginSuccess": true } })
-        })
-    })
-
-    server.listen(process.env.WEBSERVER_PORT, function (err) {
-        log.debug(`Web server & Socket.io listening on port ${process.env.WEBSERVER_PORT}.`)
-    })
-
-    const newAccount = (email, password, callback) => {
-        // SHA512 Hashing
-        var hashedPasswordSHA512 = sha512({
-            a: password,
-            b: email
-        })
-
-        // Bcrypt Hashing
-        var hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
-
-        // Generate email confirmation token
-        var emailConfirmationToken = tokenGenerator()
-
-        const NewUserSchema = {
-            "email": email,
-            "password": hashedPasswordSHA512Bcrypt,
-            "account": {
-                "activity": {
-                    "created": new Date(),
-                    "lastSeen": null
+            const NewUserSchema = {
+                "email": email,
+                "password": hashedPasswordSHA512Bcrypt,
+                "account": {
+                    "activity": {
+                        "created": new Date(),
+                        "lastSeen": null
+                    },
+                    "type": "STANDARD",
+                    "emailVerified": false
                 },
-                "type": "STANDARD",
-                "emailVerified": false
-            },
-            "sessions": [],
-            "tokens": {
-                "emailConfirmation": emailConfirmationToken
+                "sessions": [],
+                "tokens": {
+                    "emailConfirmation": emailConfirmationToken
+                }
             }
-        }
 
-        insertDB(db, "users", NewUserSchema, () => {
-            log.info("User Created")
-            callback(true)
+            // Insert new user into database
+            insertDB(db, "users", NewUserSchema, () => {
+                log.info("User Created")
+                callback(true)
+            })
+
         })
     }
 
-    const loginAccount = (email, password, callback) => {
+    loginAccount = (email, password, callback) => {
         // SHA512 Hashing
         var incomingHashedPasswordSHA512 = sha512({
             a: password,
@@ -230,6 +238,8 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             }
             // Compare whether incoming is the same as stored
             if (bcrypt.compareSync(incomingHashedPasswordSHA512, result[0].password)) {
+
+                // Payload to update database with
                 const SessionPayload = {
                     $push: {
                         sessions: {
@@ -242,10 +252,12 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
                     }
                 }
 
+                // Update database
                 return updateDB(db, "users", { "email": email }, SessionPayload, () => {
                     return callback(true)
                 })
             } else {
+                // If account details are invalid, reject
                 return callback(false)
             }
         })
@@ -253,6 +265,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
 }) // End of MongoClient
 
 const tokenGenerator = () => {
+    // Generate and return (sync) random sha512 string
     return sha512({
         a: `${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}-${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}-${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}`,
         b: uuid.v5(uuid.v5(uuid.v4(), uuid.v4()), uuid.v5(uuid.v4(), uuid.v4())) + (new Date()).toISOString()
