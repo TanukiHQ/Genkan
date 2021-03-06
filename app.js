@@ -130,22 +130,29 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     log.info("Connection with MongoDB successful.")
     const db = client.db(dbName)
 
-    // findDB(db, "users", {}, (result) => {
-    //     log.info(result)
-    // })
+    app.get('/signup', (req, res) => {
+        res.render('signup')
+    })
 
-    app.get('/', (req, res) => {
-        var metadata = {
-            meta: {
-                title: "Home",
-                path: false
-            },
-            nav: {
-                index: true
+    app.post('/signup', (req, res) => {
+        var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+        var password = req.fields.password
+
+        // Data validations
+        if (emailRegex.test(email) === false || password.length < 8) return
+
+        // Check whether account exists
+        findDB(db, "users", { "email": email }, result => {
+            if (result.length !== 0) {
+                log.info("Duplicate account")
+                return res.render('signup', { "result": { "errDuplicateEmail": true } })
             }
-        }
 
-        res.render('login', metadata)
+            newAccount(email, password, result => {
+                log.info("New Account OK")
+                return res.render('signup', { "result": { "accountCreationSuccess": true } })
+            })
+        })
     })
 
     app.get('*', (req, res) => {
@@ -164,4 +171,44 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         log.debug(`Web server & Socket.io listening on port ${process.env.WEBSERVER_PORT}.`)
     })
 
-}) // End of MongoClient
+    const newAccount = (email, password, callback) => {
+        // SHA512 Hashing
+        var hashedPasswordSHA512 = sha512({
+            a: password,
+            b: email
+        })
+
+        // Bcrypt Hashing
+        var hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
+
+        // Generate email confirmation token
+        var emailConfirmationToken = tokenGenerator()
+
+        const NewUserSchema = {
+            "email": email,
+            "password": hashedPasswordSHA512Bcrypt,
+            "account": {
+                "activity": {
+                    "created": new Date(),
+                    "lastSeen": null
+                },
+                "type": "STANDARD",
+                "emailVerified": false
+            },
+            "sessions": [],
+            "tokens": {
+                "emailConfirmation": emailConfirmationToken
+            }
+        }
+
+        insertDB(db, "users", NewUserSchema, () => {
+            log.info("User Created")
+            callback(true)
+        })
+    }
+const tokenGenerator = () => {
+    return sha512({
+        a: `${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}-${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}-${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}`,
+        b: uuid.v5(uuid.v5(uuid.v4(), uuid.v4()), uuid.v5(uuid.v4(), uuid.v4())) + (new Date()).toISOString()
+    })
+}
