@@ -1,5 +1,3 @@
-const socket = io()
-
 // Show password on mousedown on Sign up form
 $('#showPassword').on('mousedown taphold', function () {
     $("#password").attr("type", "text")
