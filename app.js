@@ -118,6 +118,8 @@ app.use(minify({
 }))
 app.use(compression())
 
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
 // For MongoDB requirement
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     if (err) {
