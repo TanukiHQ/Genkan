@@ -30,6 +30,9 @@ const sha256 = require('hash-anything').sha256
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+// JSON Web Token
+var jwt = require('jsonwebtoken');
+
 // MongoDB  -- Optional
 const MongoClient = require('mongodb').MongoClient
 const url = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
