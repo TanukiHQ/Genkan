@@ -97,5 +97,26 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
 
         })
     }
+
+    sendConfirmationEmail = (email, token) => {
+        // findDB(db, "users", { "email": email }, result => {
+
+
+        // Compile from email template
+        var data = {
+            receiver: receiver,
+            url: url
+        }
+        var message = template(data);
+
+        // send email
+        transporter.sendMail({
+            from: process.env.MAIL_FROM,
+            to: email,
+            subject: 'Confirm your HakkouID',
+            html: '<h1>Example HTML Message Body</h1>'
+        });
+    }
+
     module.exports = newAccount
 })
