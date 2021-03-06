@@ -127,5 +127,26 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         });
     }
 
+    confirmEmail = (token, callback) => {
+        findDB(db, "users", { "tokens.emailConfirmation": token }, result => {
+            if (result.length !== 1) {
+                return callback(false)
+            }
+            
+            const AccountActivatePayload = {
+                $unset: {
+                    "tokens.emailConfirmation": true
+                },
+                $set: {
+                    "account.emailVerified": true
+                }
+            }
+
+            updateDB(db, "users", { "tokens.emailConfirmation": token }, AccountActivatePayload, () => {
+                callback(true)
+            })
+        })
+    }
+
     module.exports = newAccount
 })
