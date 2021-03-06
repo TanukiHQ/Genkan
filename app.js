@@ -35,8 +35,8 @@ var jwt = require('jsonwebtoken');
 
 // MongoDB  -- Optional
 const MongoClient = require('mongodb').MongoClient
-const url = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
-const dbName = "Kaku"
+const url = process.env.MONGODB_URL
+const dbName = "Genkan"
 
 // Debugging
 const log = require('loglevel')
