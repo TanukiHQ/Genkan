@@ -155,6 +155,23 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         })
     })
 
+    app.get('/login', (req, res) => {
+        res.render('login')
+    })
+
+    app.post('/login', (req, res) => {
+        var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+        var password = req.fields.password
+
+        loginAccount(email, password, result => {
+            if (result === false) {
+                log.info("Failed to login")
+                return res.render('login', { "result": { "errCredentialsInvalid": true } })
+            } 
+
+            log.info("Login OK")
+            return res.render('login', { "result": { "loginSuccess": true } })
+        })
     })
 
     server.listen(process.env.WEBSERVER_PORT, function (err) {
@@ -196,6 +213,45 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             callback(true)
         })
     }
+
+    const loginAccount = (email, password, callback) => {
+        // SHA512 Hashing
+        var incomingHashedPasswordSHA512 = sha512({
+            a: password,
+            b: email
+        })
+        log.info("Loggin in...")
+
+        // Find account to get stored hashed
+        findDB(db, "users", { "email": email }, result => {
+            // If no account found
+            if (result.length !== 1) {
+                return callback(false)
+            }
+            // Compare whether incoming is the same as stored
+            if (bcrypt.compareSync(incomingHashedPasswordSHA512, result[0].password)) {
+                const SessionPayload = {
+                    $push: {
+                        sessions: {
+                            sid: tokenGenerator(),
+                            timestamp: new Date()
+                        }
+                    },
+                    $set: {
+                        "account.activity.lastSeen": new Date()
+                    }
+                }
+
+                return updateDB(db, "users", { "email": email }, SessionPayload, () => {
+                    return callback(true)
+                })
+            } else {
+                return callback(false)
+            }
+        })
+    }
+}) // End of MongoClient
+
 const tokenGenerator = () => {
     return sha512({
         a: `${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}-${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}-${uuid.v5(uuid.v4(), uuid.v5(uuid.v4(), uuid.v4()))}`,
