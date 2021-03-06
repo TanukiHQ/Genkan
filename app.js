@@ -124,10 +124,10 @@ const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     if (err) {
         log.error("Failed to connect to MongoDB instance (Check config file for typos)")
-        exit()
-    } else {
-        log.info("Connection with MongoDB successful.")
+        return exit()
     }
+
+    log.info("Connection with MongoDB successful.")
     const db = client.db(dbName)
 
     // findDB(db, "users", {}, (result) => {
