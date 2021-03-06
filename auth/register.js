@@ -70,6 +70,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
                         "lastSeen": null
                     },
                     "type": "STANDARD",
+                    "suspended": false,
                     "emailVerified": false
                 },
                 "sessions": [],
