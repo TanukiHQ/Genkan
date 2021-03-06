@@ -49,6 +49,15 @@ const transporter = nodemailer.createTransport({
         pass: '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'
     }
 });
+
+// Handlebars
+const Handlebars = require("handlebars")
+
+// Email Template
+const fs = require('fs')
+const confirmEmailSource = fs.readFileSync(`./themes/nichijou/mail/confirmation.hbs`, 'utf8');
+const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
+
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     const db = client.db(dbName)
     newAccount = (email, password, callback) => {
