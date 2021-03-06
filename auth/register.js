@@ -23,7 +23,7 @@ prefix.apply(log.getLogger('critical'), {
         return chalk.red.bold(`[${timestamp}] ${level} ${name}:`)
     },
 })
-log.setLevel("debug", true)
+log.setLevel(process.env.DEBUG_LEVEL, true)
 
 // MongoDB
 const MongoClient = require('mongodb').MongoClient
