@@ -46,7 +46,7 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'apikey',
-        pass: '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'
+        pass: process.env.SENDGRID_API_KEY
     }
 });
 
