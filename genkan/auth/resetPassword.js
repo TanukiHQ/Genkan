@@ -1,5 +1,6 @@
 // Load environment
-require('dotenv').config()
+// require('dotenv').config()
+const config = require("./config")
 
 // Logging
 const log = require('loglevel')
@@ -23,13 +24,13 @@ prefix.apply(log.getLogger('critical'), {
         return chalk.red.bold(`[${timestamp}] ${level} ${name}:`)
     },
 })
-log.setLevel(process.env.DEBUG_LEVEL, true)
+log.setLevel(config.loggingLevel, true)
 
 // MongoDB
 const MongoClient = require('mongodb').MongoClient
-const url = process.env.MONGODB_URL
-const dbName = process.env.DB_NAME
-const dbOps = require('../db/db')
+const url = config.mongo.url
+const dbName = config.mongo.database
+require('../db')
 
 // Hashing
 const sha512 = require('hash-anything').sha512

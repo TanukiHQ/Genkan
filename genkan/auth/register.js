@@ -1,5 +1,6 @@
 // Load environment
-require('dotenv').config()
+// require('dotenv').config()
+const config = require("../config")
 
 // Logging
 const log = require('loglevel')
@@ -23,13 +24,13 @@ prefix.apply(log.getLogger('critical'), {
         return chalk.red.bold(`[${timestamp}] ${level} ${name}:`)
     },
 })
-log.setLevel(process.env.DEBUG_LEVEL, true)
+log.setLevel(config.loggingLevel, true)
 
 // MongoDB
 const MongoClient = require('mongodb').MongoClient
-const url = process.env.MONGODB_URL
-const dbName = process.env.DB_NAME
-const dbOps = require('../db/db')
+const url = config.mongo.url
+const dbName = config.mongo.database
+require('../db')
 
 // UUID & Hashing
 const sha512 = require('hash-anything').sha512
@@ -42,11 +43,11 @@ const tokenGenerator = require('./tokenGenerator')
 // NodeMailer
 const nodemailer = require('nodemailer')
 const transporter = nodemailer.createTransport({
-    host: 'smtp.sendgrid.net',
-    port: 587,
+    host: config.smtp.server,
+    port: config.smtp.port,
     auth: {
-        user: 'apikey',
-        pass: process.env.SENDGRID_API_KEY
+        user: config.smtp.username,
+        pass: config.smtp.password
     }
 });
 
@@ -116,11 +117,11 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             receiver: receiver,
             url: url
         }
-        var message = template(data);
+        var message = confirmEmailTemplate(data);
 
         // send email
         transporter.sendMail({
-            from: process.env.MAIL_FROM,
+            from: config.smtp.mailFromAddress,
             to: email,
             subject: 'Confirm your HakkouID',
             html: '<h1>Example HTML Message Body</h1>'
