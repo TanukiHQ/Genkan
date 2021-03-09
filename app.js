@@ -1,5 +1,6 @@
 // Load environment
-require('dotenv').config()
+// require('dotenv').config()
+const config = require("./genkan/config")
 
 // Express related modules
 const express = require('express')
@@ -27,8 +28,8 @@ var jwt = require('jsonwebtoken');
 
 // MongoDB  -- Optional
 const MongoClient = require('mongodb').MongoClient
-const url = process.env.MONGODB_URL
-const dbName = process.env.DB_NAME
+const url = config.mongo.url
+const dbName = config.mongo.database
 
 // Logging
 const log = require('loglevel')
@@ -52,14 +53,14 @@ prefix.apply(log.getLogger('critical'), {
         return chalk.red.bold(`[${timestamp}] ${level} ${name}:`)
     },
 })
-log.setLevel(process.env.DEBUG_LEVEL, true)
+log.setLevel(config.loggingLevel, true)
 
 // =========================
 
 // Module imports
-require("./auth/login")
-require("./auth/register")
-require('./db/db')
+require("./genkan/auth/login")
+require("./genkan/auth/register")
+require('./genkan/db')
 
 // Email Regex 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -82,7 +83,7 @@ app.use(minify({
 }))
 app.use(compression())
 
-app.use(cookieParser(process.env.SECRET_KEY))
+app.use(cookieParser(config.genkan.secretKey))
 
 app.get('/signup', (req, res) => {
     res.render('signup')
@@ -121,11 +122,11 @@ app.post('/login', (req, res) => {
         }
 
         log.info("Login OK")
-        res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain:`.${process.env.DOMAIN}`  });
+        res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain:`.${config.webserver.domain}`  });
         return res.render('login', { "result": { "loginSuccess": true } })
     })
 })
 
-server.listen(process.env.WEBSERVER_PORT, function (err) {
-    log.debug(`Web server & Socket.io listening on port ${process.env.WEBSERVER_PORT}.`)
+server.listen(config.webserver.port, function (err) {
+    log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
 })
