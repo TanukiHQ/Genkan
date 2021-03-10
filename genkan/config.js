@@ -1,6 +1,3 @@
-// Filesystem
-const fs = require("fs")
-
 // Press any key to continue
 const pressAnyKey = require('press-any-key');
 
