@@ -54,7 +54,7 @@ const generateNewConfig = () => {
             "password": "password",
             "mailFromAddress": "accounts@example.com"
         },
-        "loggingLevel": "info"
+        "loggingLevel": "debug"
     }
 
     const file = './config.json'
