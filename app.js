@@ -11,6 +11,8 @@ const minify = require('express-minify')
 const compression = require('compression')
 const zlib = require('zlib')
 const formidable = require('express-formidable');
+const slowDown = require("express-slow-down");
+
 
 // Express Additional Flags
 app.use(compression({
@@ -85,6 +87,15 @@ app.use(compression())
 
 app.use(cookieParser(config.genkan.secretKey))
 
+
+const speedLimiter = slowDown({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    delayAfter: 100, // allow 100 requests per 15 minutes, then...
+    delayMs: 500 // begin adding 500ms of delay per request above 100:
+});
+
+app.use(speedLimiter);
+
 app.get('/signup', (req, res) => {
     res.render('signup')
 })
@@ -122,7 +133,7 @@ app.post('/login', (req, res) => {
         }
 
         log.info("Login OK")
-        res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain:`.${config.webserver.domain}`  });
+        res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain: `.${config.webserver.domain}` });
         return res.render('login', { "result": { "loginSuccess": true } })
     })
 })
