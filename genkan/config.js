@@ -1,6 +1,3 @@
-// Filesystem
-const fs = require("fs")
-
 // Press any key to continue
 const pressAnyKey = require('press-any-key');
 
@@ -9,6 +6,9 @@ require("./auth/tokenGenerator")
 
 // JSON writer
 const jsonfile = require('jsonfile')
+
+// For getting absolute path of configuration file
+const appRoot = require("app-root-path")
 
 // Logging
 const log = require('loglevel')
@@ -54,7 +54,7 @@ const generateNewConfig = () => {
             "password": "password",
             "mailFromAddress": "accounts@example.com"
         },
-        "loggingLevel": "info"
+        "loggingLevel": "debug"
     }
 
     const file = './config.json'
@@ -63,17 +63,15 @@ const generateNewConfig = () => {
 }
 
 try {
-    const config = require("./config.json")
+    const config = require(appRoot + "/config.json")
     module.exports = config
 } catch (error) {
     log.error("Genkan configuration file missing. Generating a new one for you.")
     generateNewConfig()
 
-    const config = require("./config.json")
+    const config = require(appRoot + "/config.json")
     module.exports = config
 }
-
-generateNewConfig()
 
 // if (fs.existsSync("../config.json") === undefined) {
 //     if (fs.existsSync("genkan.lock") === undefined) {
