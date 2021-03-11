@@ -50,13 +50,3 @@ $("#resetPasswordForm").submit((e) => {
         $("#passwordResetDone").show("slide", { direction: "right" }, 300)
     })
 })
-
-socket.on("RES:RESET_PASSWORD_CHANGE", (data) => {
-    if (data.status === true) {
-        $("#resetPassword").hide("slide", { direction: "left" }, 300, () => {
-            $("#passwordResetDone").show("slide", { direction: "right" }, 300)
-        })
-    } else {
-        window.location.reload()
-    }
-})

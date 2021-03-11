@@ -1,7 +1,22 @@
-function ValidatePassword() {
+// Show password on mousedown on Sign up form
+$('#showPassword').on('mousedown taphold', function () {
+    $("#registerPassword").attr("type", "text")
+    $("#registerPassword").attr("class", "input is-primary is-active")
+    $("#icon-showPassword").addClass("fa-eye")
+    $("#icon-showPassword").removeClass("fa-eye-slash")
+    $("#showPasswordText").text("Release to hide password")
+}).on('mouseup mouseleave taphold', function () {
+    $("#registerPassword").attr("type", "password")
+    $("#registerPassword").attr("class", "input")
+    $("#icon-showPassword").addClass("fa-eye-slash")
+    $("#icon-showPassword").removeClass("fa-eye")
+    $("#showPasswordText").text("Hold to show password")
+})
+
+ValidatePassword = () => {
     var str = $('#newPassword').val(); 
     console.log(str);
-    
+
     console.log(str.search(/[0-9]/))
     if (str.length <= 0) {
         $("#passwordMessage").css("visibility", "visible");
