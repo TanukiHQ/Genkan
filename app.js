@@ -63,6 +63,8 @@ log.setLevel(config.loggingLevel, true)
 require("./genkan/auth/login")
 require("./genkan/auth/register")
 require('./genkan/db')
+require('./genkan/auth/recaptchaValidation')
+//const captchaValidation = require('./genkan/auth/recaptchaValidation')
 
 // Email Regex 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -125,16 +127,27 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
     var password = req.fields.password
+    const secretKey = "SecretKey";
+    let captcha = req.fields["g-recaptcha-response"];
+    captchaValidation(captcha, secretKey, function (captchaResults) {
+        if (captchaResults === true) {
+            log.info("Recaptcha is valid")
+            loginAccount(email, password, result => {
+                if (result === false) {
+                    log.info("Failed to login")
+                    return res.render('login', { "result": { "errCredentialsInvalid": true } })
+                }
 
-    loginAccount(email, password, result => {
-        if (result === false) {
-            log.info("Failed to login")
-            return res.render('login', { "result": { "errCredentialsInvalid": true } })
+                log.info("Login OK")
+                res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain: `.${config.webserver.domain}` });
+                return res.render('login', { "result": { "loginSuccess": true } })
+            })
+        }
+        else {
+            log.warn("User is probably a bot.")
+            //return res.render('login', { "result": { "errCredentialsInvalid": true } })
         }
 
-        log.info("Login OK")
-        res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain: `.${config.webserver.domain}` });
-        return res.render('login', { "result": { "loginSuccess": true } })
     })
 })
 

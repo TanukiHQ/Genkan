@@ -23,6 +23,7 @@
                 </span>
             </div>
         </div>
+        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
         <div id="loginButton" class="buttons has-addons level-right">
             <button class="button is-primary is-fullwidth">Login&ensp;<i class="fas fa-arrow-right"></i></button>
         </div>
@@ -30,11 +31,14 @@
     <hr>
     <div class="has-text-centered">
         <span>
-            <a class="has-text-primary" data-pjax='main' href="./signup"><i class="fas fa-user-plus"></i>&ensp;Sign
-                up</a>
+            <a class="has-text-primary" data-pjax='main' href="./signup">
+                <i class="fas fa-user-plus"></i>&ensp;Sign
+                up
+            </a>
             <span class="unselectable">&ensp;&bull;&ensp;</span>
-            <a class="has-text-primary" data-pjax='main' href="./resetpassword"><i
-                    class="fas fa-question-circle"></i>&ensp;Trouble logging in?</a>
+            <a class="has-text-primary" data-pjax='main' href="./resetpassword">
+                <i class="fas fa-question-circle"></i>&ensp;Trouble logging in?
+            </a>
         </span>
     </div>
 </div>
@@ -45,8 +49,10 @@
     <div id="tooFastEmail" class="notification is-danger" style="display: none;">
         Resending emails too quickly.
     </div>
-    <p>We have sent to a verification link to <b id="emailSentTo"></b>. Please click on it to verify your
-        account with your email.<br><br>Afterwards, you may start using your account.</p>
+    <p>
+        We have sent to a verification link to <b id="emailSentTo"></b>. Please click on it to verify your
+        account with your email.<br><br>Afterwards, you may start using your account.
+    </p>
     <br>
     <button id="resendEmailButton" class="button is-light"><i class="fas fa-paper-plane"></i>&ensp;Resend Email</button>
 </div>
@@ -62,3 +68,11 @@
     <h2 class="title is-3 has-text-centered">Verifying</h2>
     <p class="subtitle is-5 has-text-centered">Please wait</p>
 </div>
+
+<script>
+    grecaptcha.ready(function () {
+        grecaptcha.execute('SITE_KEY', { action: 'submit' }).then(function (token) {
+            document.getElementById("g-recaptcha-response").value = token;
+        });
+    });
+</script>
