@@ -1,7 +1,7 @@
 function ValidatePassword() {
-    var str = document.getElementById('newPassword').value;
+    var str = $('#newPassword').val(); 
     console.log(str);
-    //var str2 = document.getElementById('<%=secondPasswordTB.ClientID%>').value;
+    
     console.log(str.search(/[0-9]/))
     if (str.length <= 0) {
         $("#passwordMessage").css("visibility", "visible");
