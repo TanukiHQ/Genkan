@@ -1,14 +1,11 @@
-// Press any key to continue
-const pressAnyKey = require('press-any-key');
-
 // Token Generator
 require("./auth/tokenGenerator")
 
 // JSON writer
 const jsonfile = require('jsonfile')
 
-// For getting absolute path of configuration file
-const appRoot = require("app-root-path")
+// Get root of project
+const root = require("app-root-path")
 
 // Logging
 const log = require('loglevel')
@@ -45,6 +42,11 @@ const generateNewConfig = () => {
             "collection": "users"
         },
         "genkan": {
+            "redirect": {
+                "afterLogin": "http://localhost:5000/success",
+                "afterSignout": "https://localhost:5000/loggedout"
+            },
+            "googleRecaptchaSecretKey": "",
             "secretKey": tokenGenerator()
         },
         "smtp": {
@@ -54,7 +56,7 @@ const generateNewConfig = () => {
             "password": "password",
             "mailFromAddress": "accounts@example.com"
         },
-        "loggingLevel": "debug"
+        "debugMode": true
     }
 
     const file = './config.json'
@@ -63,31 +65,17 @@ const generateNewConfig = () => {
 }
 
 try {
-    const config = require(appRoot + "/config.json")
+    const config = require(root + "/config.json")
     module.exports = config
 } catch (error) {
-    log.error("Genkan configuration file missing. Generating a new one for you.")
-    generateNewConfig()
-
-    const config = require(appRoot + "/config.json")
-    module.exports = config
+    try {
+        if (fs.existsSync(path)) {
+            log.error("Genkan couldn't load the configuration file correctly. Please ensure that the file is not corrupted and is valid JSON.")
+            process.exit()
+        }
+      } catch(err) {
+        log.error("We have detected that this is a new installation of Genkan.\nA configuration file has been generated for you.\nPlease start Genkan back up after modifying the file to your desired settings.")
+        generateNewConfig()
+        process.exit()
+      }    
 }
-
-// if (fs.existsSync("../config.json") === undefined) {
-//     if (fs.existsSync("genkan.lock") === undefined) {
-//         log.error("No valid genkan configuration file is present. (config.json is missing!).\n\nPlanning to start afresh? Delete '/genkan/genkan.lock' and run Genkan normally, a new configuration file will be generated for you.")
-//         process.exit()
-//     }
-
-//     log.info("We have detected that this is a new installation of Genkan.\nA configuration file has been generated for you (/config.json). Please edit this file with the desired values.\n\nWe will now pause execution and await for your return.\n(Press enter to continue)")
-
-//     generateNewConfig()
-
-//     pressAnyKey().then(() => {
-//         const config = require("../config.json")
-//         module.exports = config
-//     })
-// } else {
-//     const config = require("../config.json")
-//     module.exports = config
-// }
