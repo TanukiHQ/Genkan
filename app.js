@@ -90,6 +90,9 @@ app.use(compression())
 app.use(cookieParser(config.genkan.secretKey))
 
 
+// Google Recaptcha key
+const secretKey = config.genkan.googleRecaptchaSecretKey;
+
 const speedLimiter = slowDown({
     windowMs: 15 * 60 * 1000, // 15 minutes
     delayAfter: 100, // allow 100 requests per 15 minutes, then...
@@ -127,8 +130,7 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
     var password = req.fields.password
-    const secretKey = "SecretKey";
-    let captcha = req.fields["g-recaptcha-response"];
+    var captcha = req.fields["g-recaptcha-response"];
     captchaValidation(captcha, secretKey, function (captchaResults) {
         //skip captcha validation for testing purposes
         captchaResults = true;
@@ -152,6 +154,7 @@ app.post('/login', (req, res) => {
 
     })
 })
+
 
 server.listen(config.webserver.port, function (err) {
     log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
