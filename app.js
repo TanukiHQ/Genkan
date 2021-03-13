@@ -131,7 +131,7 @@ const webserver = () => {
                 })
             }
             else {
-                log.warn("User is probably a bot.")
+                log.info("Failed captcha check. Ignoring request.")
                 //return res.render('login', { "result": { "errCredentialsInvalid": true } })
             }
 
