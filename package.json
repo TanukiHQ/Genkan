@@ -25,9 +25,7 @@
     "app-root-path": "^3.0.0",
     "bcrypt": "^5.0.1",
     "chalk": "^4.1.0",
-    "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-formidable": "^1.2.0",
     "express-handlebars": "^5.2.1",
@@ -42,9 +40,7 @@
     "mongodb": "^3.6.4",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.5.0",
-    "press-any-key": "^0.1.1",
-    "uuid": "^8.3.2",
-    "zlib": "^1.0.5"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
