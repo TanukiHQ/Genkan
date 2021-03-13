@@ -65,8 +65,7 @@ const generateNewConfig = () => {
 }
 
 try {
-    const config = require(root + "/config.json")
-    module.exports = config
+    module.exports = require(root + "/config.json")
 } catch (error) {
     try {
         if (fs.existsSync(path)) {
