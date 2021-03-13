@@ -22,32 +22,38 @@ ValidatePassword = () => {
         $("#passwordMessage").css("visibility", "visible");
         $("#passwordMessage").text("Password length must be at least 8 characters");
         $("#passwordMessage").addClass("is-danger");
+        $("#registerButton").prop("disabled", true);
     }
     else if (str.search(/[A-Z]/) == -1) {
         $("#passwordMessage").css("visibility", "visible");
         $("#passwordMessage").text("Password must contain at least 1 uppercase letter");
         $("#passwordMessage").addClass("is-danger");
+        $("#registerButton").prop("disabled", true);
     }
     else if (str.search(/[a-z]/) == -1) {
         $("#passwordMessage").css("visibility", "visible");
         $("#passwordMessage").text("Password must contain at least 1 lowercase letter");
         $("#passwordMessage").addClass("is-danger");
+        $("#registerButton").prop("disabled", true);
     }
     else if (str.search(/[0-9]/) == -1) {
         $("#passwordMessage").css("visibility", "visible");
         $("#passwordMessage").text("Password must contain at least 1 number");
         $("#passwordMessage").addClass("is-danger");
+        $("#registerButton").prop("disabled", true);
     }
     else if (str.search(/[$&+,:;=?@#|'<>.^*()%!-]/) == -1) {
         $("#passwordMessage").css("visibility", "visible");
         $("#passwordMessage").text("Password must contain at least 1 special character");
         $("#passwordMessage").addClass("is-danger");
+        $("#registerButton").prop("disabled", true);
     }
     else {
         $("#passwordMessage").css("visibility", "visible");
         $("#passwordMessage").text("Looks Good!");
         $("#passwordMessage").removeClass("is-danger");
         $("#passwordMessage").addClass("is-success");
+        $("#registerButton").prop("disabled", false);
     }
     //If want to add another password field
     //Uncomment codes below and modify it
