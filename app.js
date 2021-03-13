@@ -107,7 +107,7 @@ const webserver = () => {
                 return res.render('signup', { "result": { "errDuplicateEmail": true } })
             }
 
-            log.info("New Account OK")
+            log.info("Account creation OK")
             return res.render('signup', { "result": { "accountCreationSuccess": true } })
         })
     })
