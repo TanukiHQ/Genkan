@@ -55,63 +55,70 @@ const speedLimiter = slowDown({
 });
 app.use(speedLimiter);
 
-app.get('/signup', (req, res) => {
-    res.render('signup')
 })
-
-app.post('/signup', (req, res) => {
-    var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
-    var password = req.fields.password
-
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-    // Data validations
-    if (emailRegex.test(email) === false || password.length < 8) return
-
-    newAccount(email, password, result => {
-        if (result === false) {
-            log.info("Duplicate account")
-            return res.render('signup', { "result": { "errDuplicateEmail": true } })
-        }
-
-        log.info("New Account OK")
-        return res.render('signup', { "result": { "accountCreationSuccess": true } })
+// Express: Routes
+const webserver = () => {
+    app.get('/signup', (req, res) => {
+        res.render('signup')
     })
-})
 
-app.get('/login', (req, res) => {
-    log.debug(req.signedCookies.sid)
-    res.render('login')
-})
+    app.post('/signup', (req, res) => {
+        var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+        var password = req.fields.password
 
-app.post('/login', (req, res) => {
-    var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
-    var password = req.fields.password
-    var captcha = req.fields["g-recaptcha-response"];
-    captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, function (captchaResults) {
-        //skip captcha validation for testing purposes
-        captchaResults = true;
-        if (captchaResults === true) {
-            log.info("Recaptcha is valid")
-            loginAccount(email, password, result => {
-                if (result === false) {
-                    log.info("Failed to login")
-                    return res.render('login', { "result": { "errCredentialsInvalid": true } })
-                }
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-                log.info("Login OK")
-                res.cookie('sid', result, CookieOptions);
-                return res.render('login', { "result": { "loginSuccess": true } })
-            })
-        }
-        else {
-            log.warn("User is probably a bot.")
-            //return res.render('login', { "result": { "errCredentialsInvalid": true } })
-        }
+        // Data validations
+        if (emailRegex.test(email) === false || password.length < 8) return
 
+        newAccount(email, password, result => {
+            if (result === false) {
+                log.info("Duplicate account")
+                return res.render('signup', { "result": { "errDuplicateEmail": true } })
+            }
+
+            log.info("New Account OK")
+            return res.render('signup', { "result": { "accountCreationSuccess": true } })
+        })
     })
-})
 
-app.listen(config.webserver.port, function (err) {
-    log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
-})
+    app.get('/login', (req, res) => {
+        log.debug(req.signedCookies.sid)
+        res.render('login')
+    })
+
+    app.post('/login', (req, res) => {
+        var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+        var password = req.fields.password
+        var captcha = req.fields["g-recaptcha-response"];
+        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, function (captchaResults) {
+            //skip captcha validation for testing purposes
+            captchaResults = true;
+            if (captchaResults === true) {
+                log.info("Recaptcha is valid")
+                loginAccount(email, password, result => {
+                    if (result === false) {
+                        log.info("Failed to login")
+                        return res.render('login', { "result": { "errCredentialsInvalid": true } })
+                    }
+
+                    log.info("Login OK")
+                    res.cookie('sid', result, CookieOptions);
+                    return res.render('login', { "result": { "loginSuccess": true } })
+                })
+            }
+            else {
+                log.warn("User is probably a bot.")
+                //return res.render('login', { "result": { "errCredentialsInvalid": true } })
+            }
+
+        })
+    })
+
+    app.listen(config.webserver.port, function (err) {
+        if (err) throw log.error(err)
+        log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
+    })
+}
+
+webserver()
