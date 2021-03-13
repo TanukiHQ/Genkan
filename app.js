@@ -1,104 +1,58 @@
 // Load environment
-// require('dotenv').config()
 const config = require("./genkan/config")
+
+// Get root of project
+const root = require("app-root-path")
+
+// Module imports
+require(root + "/genkan/auth/login")
+require(root + "/genkan/auth/register")
+require(root + '/genkan/db')
+require(root + '/genkan/auth/recaptchaValidation')
 
 // Express related modules
 const express = require('express')
-const exphbs = require('express-handlebars')
 const app = express()
+const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
-const minify = require('express-minify')
-const compression = require('compression')
-const zlib = require('zlib')
 const formidable = require('express-formidable');
 const slowDown = require("express-slow-down");
 
+// Express Additional Options
+// Express: Public Directory
+app.use(express.static(`themes/nichijou/public`))
 
-// Express Additional Flags
-app.use(compression({
-    level: zlib.Z_DEFAULT_COMPRESSION
-}))
-// app.use(minify({
-//     cache: 'cache',
-// }))
-
-// Socket.io -- Optional
-const server = require('http').Server(app)
-
-// JSON Web Token
-var jwt = require('jsonwebtoken');
-
-// MongoDB  -- Optional
-const MongoClient = require('mongodb').MongoClient
-const url = config.mongo.url
-const dbName = config.mongo.database
-
-// Logging
-const log = require('loglevel')
-const prefix = require('loglevel-plugin-prefix')
-const chalk = require('chalk')
-const colors = {
-    TRACE: chalk.magenta,
-    DEBUG: chalk.cyan,
-    INFO: chalk.blue,
-    WARN: chalk.yellow,
-    ERROR: chalk.red,
-}
-prefix.reg(log)
-prefix.apply(log, {
-    format(level, name, timestamp) {
-        return `${chalk.gray(`[${timestamp}]`)} ${colors[level.toUpperCase()](level)}` // ${chalk.white(`${name}:`)}
-    },
-})
-prefix.apply(log.getLogger('critical'), {
-    format(level, name, timestamp) {
-        return chalk.red.bold(`[${timestamp}] ${level} ${name}:`)
-    },
-})
-log.setLevel(config.loggingLevel, true)
-
-// =========================
-
-// Module imports
-require("./genkan/auth/login")
-require("./genkan/auth/register")
-require('./genkan/db')
-require('./genkan/auth/recaptchaValidation')
-//const captchaValidation = require('./genkan/auth/recaptchaValidation')
-
-// Email Regex 
-const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
+// Handlebars: Render engine
+app.set('view engine', 'hbs')
+// Handlebars: Environment options
 app.engine('hbs', exphbs({
     defaultLayout: 'main',
     extname: '.hbs',
     layoutsDir: `themes/nichijou/views/layouts/`
 }))
-
-app.set('view engine', 'hbs')
+// Handlebars: Views folder
 app.set('views', `themes/nichijou/views`)
 
-app.use(express.static(`themes/nichijou/public`))
-
-app.use(formidable());
-
-app.use(minify({
-    cache: 'cache',
-}))
-app.use(compression())
-
+// cookieParser: Secret key for signing
 app.use(cookieParser(config.genkan.secretKey))
 
+// cookieParser: Cookie schema
+const CookieOptions = {
+    httpOnly: true,
+    secure: true,
+    signed: true,
+    domain: `.${config.webserver.domain}`
+}
 
-// Google Recaptcha key
-const secretKey = config.genkan.googleRecaptchaSecretKey;
+// Formidable: For POST data accessing
+app.use(formidable());
 
+// Slowdown: For Rate limiting
 const speedLimiter = slowDown({
     windowMs: 15 * 60 * 1000, // 15 minutes
     delayAfter: 100, // allow 100 requests per 15 minutes, then...
     delayMs: 500 // begin adding 500ms of delay per request above 100:
 });
-
 app.use(speedLimiter);
 
 app.get('/signup', (req, res) => {
@@ -108,6 +62,8 @@ app.get('/signup', (req, res) => {
 app.post('/signup', (req, res) => {
     var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
     var password = req.fields.password
+
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
     // Data validations
     if (emailRegex.test(email) === false || password.length < 8) return
@@ -124,6 +80,7 @@ app.post('/signup', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
+    log.debug(req.signedCookies.sid)
     res.render('login')
 })
 
@@ -131,7 +88,7 @@ app.post('/login', (req, res) => {
     var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
     var password = req.fields.password
     var captcha = req.fields["g-recaptcha-response"];
-    captchaValidation(captcha, secretKey, function (captchaResults) {
+    captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, function (captchaResults) {
         //skip captcha validation for testing purposes
         captchaResults = true;
         if (captchaResults === true) {
@@ -143,7 +100,7 @@ app.post('/login', (req, res) => {
                 }
 
                 log.info("Login OK")
-                res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain: `.${config.webserver.domain}` });
+                res.cookie('sid', result, CookieOptions);
                 return res.render('login', { "result": { "loginSuccess": true } })
             })
         }
@@ -155,7 +112,6 @@ app.post('/login', (req, res) => {
     })
 })
 
-
-server.listen(config.webserver.port, function (err) {
+app.listen(config.webserver.port, function (err) {
     log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
 })
