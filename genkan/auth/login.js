@@ -75,11 +75,11 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
 
                 // Update database
                 return updateDB(db, "users", { "email": email }, SessionPayload, () => {
-                    return callback(true)
+                    return callback(sid)
                 })
             } else {
                 // If account details are invalid, reject
-                return callback(sid)
+                return callback(false)
             }
         })
     }
