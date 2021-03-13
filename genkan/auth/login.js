@@ -1,5 +1,4 @@
 // Load environment
-// require('dotenv').config()
 const config = require("../config")
 
 // Logging
