@@ -77,7 +77,11 @@ prefix.apply(log.getLogger('critical'), {
         return chalk.red.bold(`[${timestamp}] ${level} ${name}:`)
     },
 })
-log.setLevel(config.loggingLevel, true)
+if (config.debugMode === true) {
+    log.setLevel("debug", true)
+} else {
+    log.setLevel("info", true)
+}
 
 // Express: Routes
 const webserver = () => {
