@@ -39,6 +39,8 @@ const bcrypt = require('bcrypt');
 const tokenGenerator = require('./tokenGenerator')
 
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
+    if (err) throw err
+    
     const db = client.db(dbName)
     loginAccount = (email, password, callback) => {
         // SHA512 Hashing
@@ -46,7 +48,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             a: password,
             b: email
         })
-        log.info("Loggin in...")
 
         // Find account to get stored hashed
         findDB(db, "users", { "email": email }, result => {

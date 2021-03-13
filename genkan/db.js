@@ -5,7 +5,7 @@ insertDB = function (db, coll, docs, callback) {
     collection.insertMany([
         docs
     ], function (err, result) {
-        log.trace("Performing database operation: insert")
+        if (err) throw err
         callback(result)
     })
 }
@@ -15,7 +15,7 @@ updateDB = function (db, coll, query, ops, callback) {
     const collection = db.collection(coll)
     // Update document where a is 2, set b equal to 1
     collection.updateOne(query, ops, function (err, result) {
-        log.trace("Performing database operation: update")
+        if (err) throw err
         callback(result)
     })
 }
@@ -25,7 +25,7 @@ findDB = function (db, coll, query, callback) {
     const collection = db.collection(coll)
     // Find some documents
     collection.find(query).toArray(function (err, docs) {
-        log.trace("Performing database operation: query")
+        if (err) throw err
         callback(docs)
     })
 }
