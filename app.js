@@ -1,3 +1,6 @@
+// Boot screen
+require('./genkan/boot').boot()
+
 // Load environment
 const config = require("./genkan/config")
 
