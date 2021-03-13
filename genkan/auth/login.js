@@ -60,5 +60,22 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         })
     }
 
+    inLoggedin = (sid, callback) => {
+        findDB(db, "users", { "sessions.sid": sid }, result => {
+            // If no such session exist
+            if (result.length !== 1) {
+                return callback(false)
+            }
+
+            const updateTimestampPayload = {
+                "sessions.timestamp": new Date()
+            }
+
+            updateDB(db, "users", { "sessions.sid": sid }, updateTimestampPayload, () => {
+                return callback(true)
+            })
+        })
+    }
+
     module.exports = loginAccount
 })
