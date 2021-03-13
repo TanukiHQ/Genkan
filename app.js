@@ -7,8 +7,8 @@ const root = require("app-root-path")
 // Module imports
 require(root + "/genkan/auth/login")
 require(root + "/genkan/auth/register")
-require(root + '/genkan/db')
-require(root + '/genkan/auth/recaptchaValidation')
+require(root + "/genkan/db")
+require(root + "/genkan/auth/recaptchaValidation")
 
 // Express related modules
 const express = require('express')
