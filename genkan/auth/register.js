@@ -76,19 +76,16 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             // Insert new user into database
             insertDB(db, "users", NewUserSchema, () => {
                 callback(true)
+                sendConfirmationEmail(email, emailConfirmationToken)
             })
-
         })
     }
 
     sendConfirmationEmail = (email, token) => {
-        // findDB(db, "users", { "email": email }, result => {
-
-
         // Compile from email template
         var data = {
-            receiver: receiver,
-            url: url
+            receiver: email,
+            url: `https://id.hakkou.app/register?confirmation=${token}`
         }
         var message = confirmEmailTemplate(data);
 
@@ -97,7 +94,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             from: config.smtp.mailFromAddress,
             to: email,
             subject: 'Confirm your HakkouID',
-            html: '<h1>Example HTML Message Body</h1>'
+            html: message
         });
     }
 
@@ -106,7 +103,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             if (result.length !== 1) {
                 return callback(false)
             }
-            
             const AccountActivatePayload = {
                 $unset: {
                     "tokens.emailConfirmation": true
