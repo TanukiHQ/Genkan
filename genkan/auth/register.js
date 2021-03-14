@@ -68,7 +68,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
                     "suspended": false,
                     "emailVerified": false
                 },
-                "sessions": [],
                 "tokens": {
                     "emailConfirmation": emailConfirmationToken
                 }

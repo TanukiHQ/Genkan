@@ -30,6 +30,16 @@ findDB = function (db, coll, query, callback) {
     })
 }
 
+deleteDB = function (db, coll, query, callback) {
+    // Get the documents collection
+    const collection = db.collection(coll)
+    // Find some documents
+    collection.remove(query).toArray(function (err) {
+        if (err) throw err
+        callback(true)
+    })
+}
+
 module.exports = insertDB
 module.exports = updateDB
 module.exports = findDB
