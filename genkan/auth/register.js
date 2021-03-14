@@ -75,7 +75,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
 
             // Insert new user into database
             insertDB(db, "users", NewUserSchema, () => {
-                log.info("User Created")
                 callback(true)
             })
 
