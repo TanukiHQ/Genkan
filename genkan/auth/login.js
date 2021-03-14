@@ -22,7 +22,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         // SHA512 Hashing
         var incomingHashedPasswordSHA512 = sha512({
             a: password,
-            b: email
+            b: email + config.genkan.secretKey
         })
 
         // Find account to get stored hashed

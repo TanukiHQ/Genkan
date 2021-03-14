@@ -47,7 +47,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             // SHA512 Hashing
             var hashedPasswordSHA512 = sha512({
                 a: password,
-                b: email
+                b: email + config.genkan.secretKey
             })
 
             // Bcrypt Hashing
