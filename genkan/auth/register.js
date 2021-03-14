@@ -68,7 +68,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
                     "suspended": false,
                     "emailVerified": false
                 },
-                "sessions": [],
                 "tokens": {
                     "emailConfirmation": emailConfirmationToken
                 }
@@ -76,7 +75,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
 
             // Insert new user into database
             insertDB(db, "users", NewUserSchema, () => {
-                log.info("User Created")
                 callback(true)
             })
 
