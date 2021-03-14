@@ -165,7 +165,7 @@ const webserver = () => {
 
     app.get('/google/callback',
         passport.authenticate('google', { failureRedirect: '/login' }),
-        function (req, res) {
+        (req, res) => {
             res.redirect('/');
         });
 
