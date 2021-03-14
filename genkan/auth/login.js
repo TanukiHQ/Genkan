@@ -34,6 +34,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             // Compare whether incoming is the same as stored
             if (bcrypt.compareSync(incomingHashedPasswordSHA512, result[0].password)) {
 
+                // Generate a random token for SID
                 var sid = tokenGenerator()
 
                 // Payload to update database with
