@@ -16,13 +16,13 @@ const tokenGenerator = require('./tokenGenerator')
 
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     if (err) throw err
-    
+
     const db = client.db(dbName)
     loginAccount = (email, password, callback) => {
         // SHA512 Hashing
         var incomingHashedPasswordSHA512 = sha512({
             a: password,
-            b: email
+            b: email + config.genkan.secretKey
         })
 
         // Find account to get stored hashed
@@ -34,24 +34,30 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             // Compare whether incoming is the same as stored
             if (bcrypt.compareSync(incomingHashedPasswordSHA512, result[0].password)) {
 
+                // Generate a random token for SID
                 var sid = tokenGenerator()
 
-                // Payload to update database with
-                const SessionPayload = {
-                    $push: {
-                        sessions: {
-                            sid: sid,
-                            timestamp: new Date()
-                        }
-                    },
+                // Schema for sessions in session collection
+                const SessionSchema = {
+                    "uid": result[0]._id,
+                    "sid": tokenGenerator(),
+                    // Why is this in ISOString you ask? Because some stinky reason, MongoDB returns a completely empty object when attempting to .find().
+                    "timestamp": (new Date()).toISOString(),
+                    "createdTimestamp": new Date()
+                }
+
+                // Payload to update user's last seen in users collection
+                const UpdateLastSeenPayload = {
                     $set: {
                         "account.activity.lastSeen": new Date()
                     }
                 }
 
                 // Update database
-                return updateDB(db, "users", { "email": email }, SessionPayload, () => {
-                    return callback(sid)
+                insertDB(db, "sessions", SessionSchema, () => {
+                    updateDB(db, "users", { "email": email }, UpdateLastSeenPayload, () => {
+                        return callback(sid)
+                    })
                 })
             } else {
                 // If account details are invalid, reject
@@ -61,18 +67,31 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     }
 
     inLoggedin = (sid, callback) => {
-        findDB(db, "users", { "sessions.sid": sid }, result => {
-            // If no such session exist
+        findDB(db, "sessions", { "sid": sid }, (result) => {
             if (result.length !== 1) {
-                return callback(false)
+                callback(false)
             }
 
-            const updateTimestampPayload = {
-                "sessions.timestamp": new Date()
+            // Get time difference between last accessed date and current date
+            const timeNow = new Date()
+            const storedDate = new Date(result[0].timestamp)
+            const diffTime = Math.abs(timeNow - storedDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays > 31) {
+                deleteDB(db, "sessions", { "sid": sid }, () => {
+                    return callback(false)
+                })
             }
 
-            updateDB(db, "users", { "sessions.sid": sid }, updateTimestampPayload, () => {
-                return callback(true)
+            const UpdateTimestampPayload = {
+                $set: {
+                    "timestamp": (new Date()).toISOString()
+                }
+            }
+
+            updateDB(db, "sessions", { "sid": sid }, UpdateTimestampPayload, () => {
+                callback(true)
             })
         })
     }
