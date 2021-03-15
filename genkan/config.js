@@ -48,7 +48,10 @@ const generateNewConfig = () => {
             },
             "googleRecaptchaSecretKey": "",
             "GOOGLE_CLIENT_ID": "",
-            "GOOGLE_CLIENT_SECRET":"",
+            "GOOGLE_CLIENT_SECRET": "",
+            "allowGoogleOAuth": "",
+            "allowFacebookOAuth": "",
+            "allowTwitterOAuth": "",
             "secretKey": tokenGenerator()
         },
         "smtp": {
