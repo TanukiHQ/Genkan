@@ -12,6 +12,7 @@ require(root + "/genkan/auth/login")
 require(root + "/genkan/auth/register")
 require(root + "/genkan/db")
 require(root + "/genkan/auth/recaptchaValidation")
+//require(root + "/genkan/auth/passport")
 
 // Express related modules
 const express = require('express')
@@ -20,6 +21,7 @@ const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
 const formidable = require('express-formidable');
 const slowDown = require("express-slow-down");
+const passport = require('passport');
 
 // Express Additional Options
 // Express: Public Directory
@@ -27,12 +29,14 @@ app.use(express.static(`themes/nichijou/public`))
 
 // Handlebars: Render engine
 app.set('view engine', 'hbs')
+
 // Handlebars: Environment options
 app.engine('hbs', exphbs({
     defaultLayout: 'main',
     extname: '.hbs',
     layoutsDir: `themes/nichijou/views/layouts/`
 }))
+
 // Handlebars: Views folder
 app.set('views', `themes/nichijou/views`)
 
@@ -49,6 +53,10 @@ const CookieOptions = {
 
 // Formidable: For POST data accessing
 app.use(formidable());
+
+// Initializes passport and passport sessions
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Slowdown: For Rate limiting
 const speedLimiter = slowDown({
@@ -88,6 +96,10 @@ if (config.debugMode === true) {
 
 // Express: Routes
 const webserver = () => {
+
+    //Immediately starts at login page
+    app.get('/', (req, res) => res.render('login'))
+
     app.get('/signup', (req, res) => {
         res.render('signup')
     })
@@ -143,6 +155,30 @@ const webserver = () => {
             }
 
         })
+    })
+
+    app.get('/logout', (req, res) => {
+        req.session = null;
+        req.logout();
+        res.redirect('/');
+    })
+
+    //Google OAuth2.0
+    app.get('/google',
+        passport.authenticate('google', { scope: ['email', 'profile'] }));
+
+    app.get('/google/callback',
+        passport.authenticate('google', { failureRedirect: '/login' }),
+        (req, res) => {
+            res.redirect('/');
+        });
+
+    app.get('/sms', (req, res) => {
+        res.render('sms');
+    })
+
+    app.get('/otp', (req, res) => {
+        res.render('otp');
     })
 
     app.listen(config.webserver.port, function (err) {

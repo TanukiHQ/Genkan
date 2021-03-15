@@ -47,6 +47,11 @@ const generateNewConfig = () => {
                 "afterSignout": "https://localhost:5000/loggedout"
             },
             "googleRecaptchaSecretKey": "",
+            "GOOGLE_CLIENT_ID": "",
+            "GOOGLE_CLIENT_SECRET": "",
+            "allowGoogleOAuth": "",
+            "allowFacebookOAuth": "",
+            "allowTwitterOAuth": "",
             "secretKey": tokenGenerator()
         },
         "smtp": {
