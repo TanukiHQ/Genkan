@@ -107,20 +107,32 @@ const webserver = () => {
     app.post('/signup', (req, res) => {
         var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
         var password = req.fields.password
+        var captcha = req.fields["g-recaptcha-response"];
 
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
         // Data validations
         if (emailRegex.test(email) === false || password.length < 8) return
 
-        newAccount(email, password, result => {
-            if (result === false) {
-                log.info("Duplicate account")
-                return res.render('signup', { "result": { "errDuplicateEmail": true } })
-            }
+        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, (captchaResults) => {
+            //skip captcha validation for testing purposes
+            captchaResults = true;
+            if (captchaResults === true) {
+                log.info("Recaptcha is valid")
+                newAccount(email, password, null, result => {
+                    if (result === false) {
+                        log.info("Duplicate account")
+                        return res.render('signup', { "result": { "errDuplicateEmail": true } })
+                    }
 
-            log.info("Account creation OK")
-            return res.render('signup', { "result": { "accountCreationSuccess": true } })
+                    log.info("Account creation OK")
+                    return res.render('signup', { "result": { "accountCreationSuccess": true } })
+                })
+            }
+            else {
+                log.info("Failed captcha check. Ignoring request.")
+                //return res.render('login', { "result": { "errCredentialsInvalid": true } })
+            }
         })
     })
 
@@ -133,7 +145,7 @@ const webserver = () => {
         var email = req.fields.email.toLowerCase().replace(/\s+/g, '')
         var password = req.fields.password
         var captcha = req.fields["g-recaptcha-response"];
-        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, function (captchaResults) {
+        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, (captchaResults) => {
             //skip captcha validation for testing purposes
             captchaResults = true;
             if (captchaResults === true) {

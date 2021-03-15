@@ -36,7 +36,7 @@ const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
 
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
     const db = client.db(dbName)
-    newAccount = (email, password, callback) => {
+    newAccount = (email, password, googleID, callback) => {
         // Check for duplicate accounts
         findDB(db, "users", { "email": email }, result => {
             // Reject if duplicate
@@ -59,6 +59,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
             const NewUserSchema = {
                 "email": email,
                 "password": hashedPasswordSHA512Bcrypt,
+                "googleID": googleID,
                 "account": {
                     "activity": {
                         "created": new Date(),
