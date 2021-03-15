@@ -1,3 +1,6 @@
+// Module imports
+//require("/genkan/auth/login")
+//require("/genkan/auth/register")
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 
@@ -22,6 +25,26 @@ passport.use(new GoogleStrategy({
         //    return done(err, user);
         //});
         console.log(profile);
+        const googleID = profile.id;
+        const displayName = profile.displayName;
+        const email = profile.email;
+        const verified = profile.verified;
+        const emailVerified = profile.email_verified;
+        //console.log(googleID);
+        //console.log(displayName);
+        //console.log(email);
+        //console.log(emailVerified);
+
+        //newAccount(email, password, result => {
+        //    if (result === false) {
+        //        log.info("Duplicate account")
+        //        return res.render('signup', { "result": { "errDuplicateEmail": true } })
+        //    }
+
+        //    log.info("Account creation OK")
+        //    return res.render('signup', { "result": { "accountCreationSuccess": true } })
+        //})
+
         return done(null, profile);
     }
 ));

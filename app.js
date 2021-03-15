@@ -12,7 +12,7 @@ require(root + "/genkan/auth/login")
 require(root + "/genkan/auth/register")
 require(root + "/genkan/db")
 require(root + "/genkan/auth/recaptchaValidation")
-require(root + "/genkan/auth/passport")
+//require(root + "/genkan/auth/passport")
 
 // Express related modules
 const express = require('express')
@@ -29,12 +29,14 @@ app.use(express.static(`themes/nichijou/public`))
 
 // Handlebars: Render engine
 app.set('view engine', 'hbs')
+
 // Handlebars: Environment options
 app.engine('hbs', exphbs({
     defaultLayout: 'main',
     extname: '.hbs',
     layoutsDir: `themes/nichijou/views/layouts/`
 }))
+
 // Handlebars: Views folder
 app.set('views', `themes/nichijou/views`)
 
@@ -95,7 +97,8 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
 
-    app.get('/', (req, res) => res.send('Home Page'))
+    //Immediately starts at login page
+    app.get('/', (req, res) => res.render('login'))
 
     app.get('/signup', (req, res) => {
         res.render('signup')
@@ -160,6 +163,7 @@ const webserver = () => {
         res.redirect('/');
     })
 
+    //Google OAuth2.0
     app.get('/google',
         passport.authenticate('google', { scope: ['email', 'profile'] }));
 
@@ -169,6 +173,14 @@ const webserver = () => {
             res.redirect('/');
         });
 
+    app.get('/sms', (req, res) => {
+        res.render('sms');
+    })
+
+    app.get('/otp', (req, res) => {
+        res.render('otp');
+    })
+
     app.listen(config.webserver.port, function (err) {
         if (err) throw log.error(err)
         log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
@@ -176,4 +188,3 @@ const webserver = () => {
 }
 
 webserver()
-

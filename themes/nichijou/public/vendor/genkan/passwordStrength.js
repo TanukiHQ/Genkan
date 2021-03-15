@@ -15,9 +15,6 @@ $('#showPassword').on('mousedown taphold', function () {
 
 ValidatePassword = () => {
     var str = $('#newPassword').val(); 
-    console.log(str);
-
-    console.log(str.search(/[0-9]/))
     if (str.length <= 0) {
         $("#passwordMessage").css("visibility", "visible");
         $("#passwordMessage").text("Password length must be at least 8 characters");
