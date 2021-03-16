@@ -42,6 +42,7 @@ const generateNewConfig = () => {
             "collection": "users"
         },
         "genkan": {
+            "theme": "uchi",
             "redirect": {
                 "afterLogin": "http://localhost:5000/success",
                 "afterSignout": "https://localhost:5000/loggedout"
