@@ -15,6 +15,9 @@ const saltRounds = 10;
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
 
+//Random Password Generator
+const generator = require('generate-password');
+
 // NodeMailer
 const nodemailer = require('nodemailer')
 const transporter = nodemailer.createTransport({
@@ -79,6 +82,78 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
                 callback(true)
                 sendConfirmationEmail(email, emailConfirmationToken)
             })
+        })
+    }
+
+    newAccountGoogle = (email, googleID, callback) => {
+        findDB(db, "users", { "email": email }, result => {
+            //If user has email in db
+            if (result.length !== 0) {
+
+                findDB(db, "users", { "email": email, "googleID": googleID }, result => {
+
+                    //If user has email and googleID in db
+                    if (result.length !== 0) {
+                        return callback(false)
+                    }
+                    else {
+                        const setGoogleID = {
+                            $set: {
+                                "googleID": googleID
+                            }
+                        }
+
+                        updateDB(db, "users", { "email": email }, setGoogleID, () => {
+                            return callback("updated db")//console.log("it exists")
+                        })
+                    }
+
+                })
+            }
+            //New user when login with Google OAuth
+            else {
+                //Random password generator here
+                var password = generator.generate({
+                    length: 12,
+                    strict: true
+                });
+
+                // SHA512 Hashing
+                var hashedPasswordSHA512 = sha512({
+                    a: password,
+                    b: email + config.genkan.secretKey
+                })
+
+                // Bcrypt Hashing
+                var hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
+
+                // Generate email confirmation token
+                var emailConfirmationToken = tokenGenerator()
+
+                const NewUserSchema = {
+                    "email": email,
+                    "password": hashedPasswordSHA512Bcrypt,
+                    "googleID": googleID,
+                    "account": {
+                        "activity": {
+                            "created": new Date(),
+                            "lastSeen": null
+                        },
+                        "type": "STANDARD",
+                        "suspended": false,
+                        "emailVerified": false
+                    },
+                    "tokens": {
+                        "emailConfirmation": emailConfirmationToken
+                    }
+                }
+
+                // Insert new user into database
+                insertDB(db, "users", NewUserSchema, () => {
+                    callback(true)
+                    sendConfirmationEmail(email, emailConfirmationToken)
+                })
+            }
         })
     }
 

@@ -66,6 +66,10 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
         })
     }
 
+    //loginGoogleAccount = (email, callback) => {
+
+    //}
+
     inLoggedin = (sid, callback) => {
         findDB(db, "sessions", { "sid": sid }, (result) => {
             if (result.length !== 1) {

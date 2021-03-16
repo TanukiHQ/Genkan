@@ -1,7 +1,8 @@
 // Module imports
-//require("/genkan/auth/login")
-//require("/genkan/auth/register")
-const config = require("./genkan/config");
+const root = require("app-root-path");
+require(root + "/genkan/auth/login");
+require(root + "/genkan/auth/register");
+const config = require(root + "/genkan/config");
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 
@@ -25,7 +26,7 @@ passport.use(new GoogleStrategy({
         //User.findOrCreate({ googleId: profile.id }, function (err, user) {
         //    return done(err, user);
         //});
-        console.log(profile);
+        //console.log(profile);
         const googleID = profile.id;
         const displayName = profile.displayName;
         const email = profile.email;
@@ -35,19 +36,17 @@ passport.use(new GoogleStrategy({
         //console.log(displayName);
         //console.log(email);
         //console.log(emailVerified);
-
-        //newAccount(email, password, result => {
-        //    if (result === false) {
-        //        log.info("Duplicate account")
-        //        return res.render('signup', { "result": { "errDuplicateEmail": true } })
-        //    }
-
-        //    log.info("Account creation OK")
-        //    return res.render('signup', { "result": { "accountCreationSuccess": true } })
-        //})
-
         //login and register of user will happen here
+        if (verified === true && emailVerified === true) {
+            newAccountGoogle(email, googleID, result => {
 
+                console.log(result);
+
+            })
+        }
+        else {
+            console.log("user is not verified")
+        }
         return done(null, profile);
     }
 ));
