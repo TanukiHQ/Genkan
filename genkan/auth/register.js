@@ -1,5 +1,7 @@
 // Load environment
 const config = require("../config")
+// Name of theme used in configuration
+const theme = `genkan-theme-${config.genkan.theme}`
 
 // MongoDB
 const MongoClient = require('mongodb').MongoClient
@@ -31,7 +33,7 @@ const Handlebars = require("handlebars")
 
 // Email Template
 const fs = require('fs')
-const confirmEmailSource = fs.readFileSync(`./themes/nichijou/mail/confirmation.hbs`, 'utf8');
+const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmation.hbs`, 'utf8');
 const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
 
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {

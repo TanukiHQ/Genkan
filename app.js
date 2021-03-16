@@ -3,6 +3,8 @@ require('./genkan/boot').boot()
 
 // Load environment
 const config = require("./genkan/config")
+// Name of theme used in configuration
+const theme = `genkan-theme-${config.genkan.theme}`
 
 // Get root of project
 const root = require("app-root-path")
@@ -25,7 +27,7 @@ const passport = require('passport');
 
 // Express Additional Options
 // Express: Public Directory
-app.use(express.static(`themes/nichijou/public`))
+app.use("/", express.static(`node_modules/${theme}/public`))
 
 // Handlebars: Render engine
 app.set('view engine', 'hbs')
@@ -34,11 +36,14 @@ app.set('view engine', 'hbs')
 app.engine('hbs', exphbs({
     defaultLayout: 'main',
     extname: '.hbs',
-    layoutsDir: `themes/nichijou/views/layouts/`
+    layoutsDir: `node_modules/${theme}/views/layouts/`
 }))
 
 // Handlebars: Views folder
-app.set('views', `themes/nichijou/views`)
+app.set('views', [
+    `node_modules/${theme}/views`,
+    `views`
+])
 
 // cookieParser: Secret key for signing
 app.use(cookieParser(config.genkan.secretKey))

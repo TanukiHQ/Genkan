@@ -78,9 +78,9 @@ try {
             log.error("Genkan couldn't load the configuration file correctly. Please ensure that the file is not corrupted and is valid JSON.")
             process.exit()
         }
-      } catch(err) {
+    } catch (err) {
         log.error("We have detected that this is a new installation of Genkan.\nA configuration file has been generated for you.\nPlease start Genkan back up after modifying the file to your desired settings.")
         generateNewConfig()
         process.exit()
-      }    
+    }
 }
