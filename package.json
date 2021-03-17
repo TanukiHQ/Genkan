@@ -31,7 +31,7 @@
     "express-handlebars": "^5.2.1",
     "express-minify": "^1.0.0",
     "express-slow-down": "^1.4.0",
-    "generate-password": "^1.6.0",
+    "genkan-theme-uchi": "^1.0.0",
     "handlebars": "^4.7.7",
     "hash-anything": "^1.3.1",
     "jsonfile": "^6.1.0",
