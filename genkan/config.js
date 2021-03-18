@@ -53,7 +53,11 @@ const generateNewConfig = () => {
             "allowGoogleOAuth": "",
             "allowFacebookOAuth": "",
             "allowTwitterOAuth": "",
-            "secretKey": tokenGenerator()
+            "secretKey": tokenGenerator(),
+            "api": {
+                "globalAPIKey": apiKeyGenerator(),
+                "useHTTPS": true
+            }
         },
         "smtp": {
             "server": "smtp.sendgrid.net",
