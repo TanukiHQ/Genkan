@@ -31,43 +31,43 @@ prefix.apply(log.getLogger('critical'), {
 })
 
 const generateNewConfig = () => {
-    const ConfigSchema = {
-        "webserver": {
-            "domain": "localhost:5000",
-            "port": 5000
-        },
-        "mongo": {
-            "url": "mongodb://localhost:27017/",
-            "database": "Genkan",
-            "collection": "users"
-        },
-        "genkan": {
-            "theme": "uchi",
-            "redirect": {
-                "afterLogin": "http://localhost:5000/success",
-                "afterSignout": "https://localhost:5000/loggedout"
-            },
-            "googleRecaptchaSecretKey": "",
-            "GOOGLE_CLIENT_ID": "",
-            "GOOGLE_CLIENT_SECRET": "",
-            "allowGoogleOAuth": "",
-            "allowFacebookOAuth": "",
-            "allowTwitterOAuth": "",
-            "secretKey": tokenGenerator(),
-            "api": {
-                "globalAPIKey": apiKeyGenerator(),
-                "useHTTPS": true
-            }
-        },
-        "smtp": {
-            "server": "smtp.sendgrid.net",
-            "port": 587,
-            "username": "apikey",
-            "password": "password",
-            "mailFromAddress": "accounts@example.com"
-        },
-        "debugMode": true
-    }
+  const ConfigSchema = {
+    'webserver': {
+      'domain': 'localhost:5000',
+      'port': 5000,
+    },
+    'mongo': {
+      'url': 'mongodb://localhost:27017/',
+      'database': 'Genkan',
+      'collection': 'users',
+    },
+    'genkan': {
+      'theme': 'uchi',
+      'redirect': {
+        'afterLogin': 'http://localhost:5000/success',
+        'afterSignout': 'https://localhost:5000/loggedout',
+      },
+      'googleRecaptchaSecretKey': '',
+      'GOOGLE_CLIENT_ID': '',
+      'GOOGLE_CLIENT_SECRET': '',
+      'allowGoogleOAuth': '',
+      'allowFacebookOAuth': '',
+      'allowTwitterOAuth': '',
+      'secretKey': tokenGenerator(),
+      'api': {
+        'globalAPIKey': apiKeyGenerator(),
+        'useHTTPS': true,
+      },
+    },
+    'smtp': {
+      'server': 'smtp.sendgrid.net',
+      'port': 587,
+      'username': 'apikey',
+      'password': 'password',
+      'mailFromAddress': 'accounts@example.com',
+    },
+    'debugMode': true,
+  }
 
   const file = './config.json'
 
