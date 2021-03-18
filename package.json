@@ -2,7 +2,7 @@
   "name": "genkan",
   "version": "0.1.2",
   "description": "No nonsense authentication system using MongoDB",
-  "main": "app.js",
+  "main": "lib/module.js",
   "scripts": {
     "test": "nodemon app"
   },
