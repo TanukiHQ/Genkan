@@ -65,7 +65,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
         })
     }
 
-    inLoggedin = (sid, callback) => {
+    validateSession = (sid, callback) => {
         findDB(db, 'sessions', {'sid': sid}, (result) => {
             if (result.length !== 1) {
                 callback(false)
@@ -96,4 +96,5 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
     }
 
     module.exports = loginAccount
+    module.exports = validateSession
 })
