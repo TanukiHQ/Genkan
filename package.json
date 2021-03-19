@@ -1,6 +1,6 @@
 {
   "name": "genkan",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "No nonsense authentication system using MongoDB",
   "main": "app.js",
   "scripts": {
