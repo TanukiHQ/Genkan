@@ -2,7 +2,7 @@
   "name": "genkan",
   "version": "0.1.2",
   "description": "No nonsense authentication system using MongoDB",
-  "main": "app.js",
+  "main": "api/module.js",
   "scripts": {
     "test": "nodemon app"
   },
@@ -26,6 +26,7 @@
     "bcrypt": "^5.0.1",
     "chalk": "^4.1.0",
     "cookie-parser": "^1.4.5",
+    "cryptr": "^6.0.2",
     "express": "^4.17.1",
     "express-formidable": "^1.2.0",
     "express-handlebars": "^5.2.1",
@@ -43,6 +44,7 @@
     "nodemailer": "^6.5.0",
     "passport": "^0.4.1",
     "passport-google-oauth2": "^0.2.0",
+    "request": "^2.88.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

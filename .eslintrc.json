@@ -13,6 +13,8 @@
     "rules": {
         "linebreak-style": 0,
         "semi": 0,
-        "max-len": 0
+        "max-len": 0,
+        "indent": ["error", 4],
+        "new-cap": 0
     }
 }

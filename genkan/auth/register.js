@@ -20,12 +20,12 @@ const tokenGenerator = require('./tokenGenerator')
 // NodeMailer
 const nodemailer = require('nodemailer')
 const transporter = nodemailer.createTransport({
-  host: config.smtp.server,
-  port: config.smtp.port,
-  auth: {
-    user: config.smtp.username,
-    pass: config.smtp.password,
-  },
+    host: config.smtp.server,
+    port: config.smtp.port,
+    auth: {
+        user: config.smtp.username,
+        pass: config.smtp.password,
+    },
 });
 
 // Handlebars
@@ -37,88 +37,88 @@ const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmat
 const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
 
 MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
-  const db = client.db(dbName)
-  newAccount = (email, password, callback) => {
+    const db = client.db(dbName)
+    newAccount = (email, password, callback) => {
     // Check for duplicate accounts
-    findDB(db, 'users', {'email': email}, (result) => {
-      // Reject if duplicate
-      if (result.length !== 0) {
-        return callback(false)
-      }
+        findDB(db, 'users', {'email': email}, (result) => {
+            // Reject if duplicate
+            if (result.length !== 0) {
+                return callback(false)
+            }
 
-      // SHA512 Hashing
-      const hashedPasswordSHA512 = sha512({
-        a: password,
-        b: email + config.genkan.secretKey,
-      })
+            // SHA512 Hashing
+            const hashedPasswordSHA512 = sha512({
+                a: password,
+                b: email + config.genkan.secretKey,
+            })
 
-      // Bcrypt Hashing
-      const hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
+            // Bcrypt Hashing
+            const hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
 
-      // Generate email confirmation token
-      const emailConfirmationToken = tokenGenerator()
+            // Generate email confirmation token
+            const emailConfirmationToken = tokenGenerator()
 
-      const NewUserSchema = {
-        'email': email,
-        'password': hashedPasswordSHA512Bcrypt,
-        'account': {
-          'activity': {
-            'created': new Date(),
-            'lastSeen': null,
-          },
-          'type': 'STANDARD',
-          'suspended': false,
-          'emailVerified': false,
-        },
-        'tokens': {
-          'emailConfirmation': emailConfirmationToken,
-        },
-      }
+            const NewUserSchema = {
+                'email': email,
+                'password': hashedPasswordSHA512Bcrypt,
+                'account': {
+                    'activity': {
+                        'created': new Date(),
+                        'lastSeen': null,
+                    },
+                    'type': 'STANDARD',
+                    'suspended': false,
+                    'emailVerified': false,
+                },
+                'tokens': {
+                    'emailConfirmation': emailConfirmationToken,
+                },
+            }
 
-      // Insert new user into database
-      insertDB(db, 'users', NewUserSchema, () => {
-        callback(true)
-        sendConfirmationEmail(email, emailConfirmationToken)
-      })
-    })
-  }
-
-  sendConfirmationEmail = (email, token) => {
-    // Compile from email template
-    const data = {
-      receiver: email,
-      url: `https://id.hakkou.app/register?confirmation=${token}`,
+            // Insert new user into database
+            insertDB(db, 'users', NewUserSchema, () => {
+                callback(true)
+                sendConfirmationEmail(email, emailConfirmationToken)
+            })
+        })
     }
-    const message = confirmEmailTemplate(data);
 
-    // send email
-    transporter.sendMail({
-      from: config.smtp.mailFromAddress,
-      to: email,
-      subject: 'Confirm your HakkouID',
-      html: message,
-    });
-  }
+    sendConfirmationEmail = (email, token) => {
+    // Compile from email template
+        const data = {
+            receiver: email,
+            url: `https://id.hakkou.app/register?confirmation=${token}`,
+        }
+        const message = confirmEmailTemplate(data);
 
-  confirmEmail = (token, callback) => {
-    findDB(db, 'users', {'tokens.emailConfirmation': token}, (result) => {
-      if (result.length !== 1) {
-        return callback(false)
-      }
-      const AccountActivatePayload = {
-        $unset: {
-          'tokens.emailConfirmation': true,
-        },
-        $set: {
-          'account.emailVerified': true,
-        },
-      }
+        // send email
+        transporter.sendMail({
+            from: config.smtp.mailFromAddress,
+            to: email,
+            subject: 'Confirm your HakkouID',
+            html: message,
+        });
+    }
 
-      updateDB(db, 'users', {'tokens.emailConfirmation': token}, AccountActivatePayload, () => {
-        callback(true)
-      })
-    })
-  }
+    confirmEmail = (token, callback) => {
+        findDB(db, 'users', {'tokens.emailConfirmation': token}, (result) => {
+            if (result.length !== 1) {
+                return callback(false)
+            }
+            const AccountActivatePayload = {
+                $unset: {
+                    'tokens.emailConfirmation': true,
+                },
+                $set: {
+                    'account.emailVerified': true,
+                },
+            }
 
-  module.exports = newAccount
+            updateDB(db, 'users', {'tokens.emailConfirmation': token}, AccountActivatePayload, () => {
+                callback(true)
+            })
+        })
+    }
+
+    module.exports = newAccount
 })
