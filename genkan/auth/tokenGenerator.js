@@ -11,13 +11,4 @@ tokenGenerator = () => {
     })
 }
 
-apiKeyGenerator = () => {
-    // Generate and return (sync) random sha1 string
-    return `genkan_${sha1({
-        a: tokenGenerator(),
-        b: tokenGenerator() + (new Date()).toISOString(),
-    })}`
-}
-
 module.exports = tokenGenerator
-module.exports = apiKeyGenerator

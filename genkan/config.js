@@ -30,6 +30,14 @@ prefix.apply(log.getLogger('critical'), {
     },
 })
 
+apiKeyGenerator = () => {
+    // Generate and return (sync) random sha1 string
+    return `genkan_${sha1({
+        a: tokenGenerator(),
+        b: tokenGenerator() + (new Date()).toISOString(),
+    })}`
+}
+
 const generateNewConfig = () => {
     const ConfigSchema = {
         'webserver': {
