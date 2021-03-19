@@ -65,7 +65,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
         })
     }
 
-    validateSession = (sid, callback) => {
+    checkAndRenewSession = (sid, callback) => {
         findDB(db, 'sessions', {'sid': sid}, (result) => {
             if (result.length !== 1) {
                 return callback(false)
@@ -96,5 +96,5 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
     }
 
     module.exports = loginAccount
-    module.exports = validateSession
+    module.exports = checkAndRenewSession
 })
