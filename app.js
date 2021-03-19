@@ -14,6 +14,7 @@ require(root + '/genkan/auth/login')
 require(root + '/genkan/auth/register')
 require(root + '/genkan/db')
 require(root + '/genkan/auth/recaptchaValidation')
+require(root + '/genkan/api')
 // require(root + "/genkan/auth/passport")
 
 // Express related modules
@@ -184,8 +185,20 @@ const webserver = () => {
     })
 
     app.post('/api', (req, res) => {
-        console.log(req.fields)
-        return res.send({'a': 'a'})
+        const data = decapsulateDencryptPayloadAndParse(req.fields)
+
+        if (data.requestType === 'CHECK_LOGIN_STATUS') {
+            getSessionStatus(data, (result) => {
+                console.log(result)
+                return res.send(result)
+            })
+        } else if (data.requestType === 'GET_USER') {
+            getUserObject(data, ((result) => {
+                return res.send(result)
+            }))
+        }
+
+        console.log(data)
     })
 
     app.listen(config.webserver.port, function(err) {
