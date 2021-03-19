@@ -68,7 +68,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
     validateSession = (sid, callback) => {
         findDB(db, 'sessions', {'sid': sid}, (result) => {
             if (result.length !== 1) {
-                callback(false)
+                return callback(false)
             }
 
             // Get time difference between last accessed date and current date
