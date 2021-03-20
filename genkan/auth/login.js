@@ -27,6 +27,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
 
     // Find account to get stored hashed
     findDB(db, 'users', {'email': email}, (result) => {
+      console.log(result)
       // If no account found
       if (result.length !== 1) {
         return callback(false)

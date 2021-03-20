@@ -2,6 +2,7 @@
 const root = require('app-root-path');
 require(root + '/genkan/auth/login');
 require(root + '/genkan/auth/register');
+require(root + '/genkan/auth/oAuth');
 const config = require(root + '/genkan/config');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
@@ -17,8 +18,10 @@ passport.deserializeUser(function(user, done) {
 });
 
 passport.use(new GoogleStrategy({
-  clientID: config.genkan.GOOGLE_CLIENT_ID,
-  clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,
+  // clientID: config.genkan.GOOGLE_CLIENT_ID,
+  // clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,
+  clientID: '172774619079-ujcf3eu36nu61pc6bvelduv8t50hstnv.apps.googleusercontent.com',
+  clientSecret: 'DojUGFgTobZjv4WqibV5SDVI',
   callbackURL: 'http://localhost:5000/google/callback',
   passReqToCallback: true,
 },
@@ -30,18 +33,11 @@ function(request, accessToken, refreshToken, profile, done) {
   const verified = profile.verified;
   const emailVerified = profile.email_verified;
   // console.log(googleID);
-  // console.log(displayName);
-  // console.log(email);
-  // console.log(emailVerified);
   // login and register of user will happen here
   if (verified === true && emailVerified === true) {
-    newAccountGoogle(email, googleID, (result) => {
-      console.log(result);
-      if (result == false) {
-        console.log('logging in google user')
-      } else {
-        console.log('new google user')
-      }
+      loginAccountGoogle(email, googleID, (result) => {
+          console.log("Inside passport")
+          console.log(result)
     })
   } else {
     console.log('user is not verified')

@@ -30,6 +30,7 @@
     "express-formidable": "^1.2.0",
     "express-handlebars": "^5.2.1",
     "express-minify": "^1.0.0",
+    "express-session": "^1.17.1",
     "express-slow-down": "^1.4.0",
     "generate-password": "^1.6.0",
     "genkan-theme-uchi": "^1.0.1",

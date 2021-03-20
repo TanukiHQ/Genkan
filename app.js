@@ -14,13 +14,15 @@ require(root + '/genkan/auth/login')
 require(root + '/genkan/auth/register')
 require(root + '/genkan/db')
 require(root + '/genkan/auth/recaptchaValidation')
-// require(root + '/genkan/auth/passport')
+require(root + '/genkan/auth/passport')
+require(root + '/genkan/auth/oAuth')
 
 // Express related modules
 const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const formidable = require('express-formidable');
 const slowDown = require('express-slow-down');
 const passport = require('passport');
@@ -55,6 +57,9 @@ const CookieOptions = {
   signed: true,
   domain: `.${config.webserver.domain}`,
 }
+
+// Express session
+app.use(session({secret: config.genkan.secretKey, resave: false, saveUninitialized: false}));
 
 // Formidable: For POST data accessing
 app.use(formidable());
@@ -160,8 +165,8 @@ const webserver = () => {
   })
 
   app.get('/login', (req, res) => {
-    log.debug(req.signedCookies.sid)
-    res.render('login')
+    // log.debug(req.signedCookies.sid)
+    res.render('login', {result: req.session.result})
   })
 
   app.post('/login', (req, res) => {
@@ -197,10 +202,6 @@ const webserver = () => {
     res.redirect('/');
   })
 
-  // const allowGoogleLogin = config.genkan.allowGoogleOAuth
-  // const allowFacebookLogin = config.genkan.allowFacebookOAuth
-  // const allowTwiterLogin = config.genkan.allowTwitterOAuth
-
   // Google OAuth2.0
   app.get('/google', passport.authenticate('google',
       {scope: ['email', 'profile'], prompt: 'select_account'},
@@ -209,16 +210,35 @@ const webserver = () => {
   app.get('/google/callback',
       passport.authenticate('google', {failureRedirect: '/login'}),
       (req, res) => {
-        res.redirect('/');
+        // res.redirect("/login")
+        //  console.log(req.user.email)
+        const email = req.user.email
+        const googleID = req.user.id
+          findUIDByGoogleID(email, googleID, (result) => {
+            console.log("======SID should be below here======")
+            console.log(result)
+            console.log("=====")
+          // res.redirect("/login")
+          // return res.render('login', { 'result': { 'loginSuccess': true } })
+
+          if (result === false) {
+            log.info('Failed login via Google')
+            res.redirect('/login');
+          } else {
+            log.info('Successful login via Google')
+            res.cookie('sid', result, CookieOptions);
+            res.redirect('/login')
+          }
+        })
       });
 
-  app.get('/sms', (req, res) => {
-    res.render('sms');
-  })
+  //app.get('/sms', (req, res) => {
+  //  res.render('sms');
+  //})
 
-  app.get('/otp', (req, res) => {
-    res.render('otp');
-  })
+  //app.get('/otp', (req, res) => {
+  //  res.render('otp');
+  //})
 
   app.post('/api', (req, res) => {
     console.log(req.fields)
