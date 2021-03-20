@@ -22,6 +22,7 @@ const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
+const session = require('express-session');
 const formidable = require('express-formidable');
 const slowDown = require('express-slow-down');
 const passport = require('passport');
@@ -56,6 +57,9 @@ const CookieOptions = {
     signed: true,
     domain: `.${config.webserver.domain}`,
 }
+
+// Express session
+app.use(session({secret: config.genkan.secretKey, resave: false, saveUninitialized: false}));
 
 // Formidable: For POST data accessing
 app.use(formidable());
@@ -173,13 +177,13 @@ const webserver = () => {
     //         res.redirect('/');
     //     });
 
-    app.get('/sms', (req, res) => {
-        res.render('sms');
-    })
+    // app.get('/sms', (req, res) => {
+    //     res.render('sms');
+    // })
 
-    app.get('/otp', (req, res) => {
-        res.render('otp');
-    })
+    // app.get('/otp', (req, res) => {
+    //     res.render('otp');
+    // })
 
     app.post('/api', (req, res) => {
         const data = decapsulateDencryptPayloadAndParse(req.fields)
