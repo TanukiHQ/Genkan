@@ -15,6 +15,7 @@ require(root + '/genkan/auth/register')
 require(root + '/genkan/db')
 require(root + '/genkan/auth/recaptchaValidation')
 require(root + '/genkan/api')
+require(root + '/genkan/auth/logout')
 // require(root + "/genkan/auth/passport")
 
 // Express related modules
@@ -162,8 +163,10 @@ const webserver = () => {
     })
 
     app.get('/logout', (req, res) => {
-        res.clearCookie('sid', CookieOptions);
-        res.redirect('/');
+        logoutAccount(req.cookies.sid, () => {
+            res.clearCookie('sid', CookieOptions);
+        })
+        return res.redirect('/');
     })
 
     // Google OAuth2.0
