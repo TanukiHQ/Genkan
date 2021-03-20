@@ -106,7 +106,7 @@ if (config.debugMode === true) {
 
 // Express: Routes
 const webserver = () => {
-  // Immediately starts at login page
+  // Immediately starts at login page for convinience sake
   app.get('/', (req, res) => res.render('login'))
 
   app.get('/signup', (req, res) => {
@@ -210,16 +210,12 @@ const webserver = () => {
   app.get('/google/callback',
       passport.authenticate('google', {failureRedirect: '/login'}),
       (req, res) => {
-        // res.redirect("/login")
-        //  console.log(req.user.email)
         const email = req.user.email
         const googleID = req.user.id
-          findUIDByGoogleID(email, googleID, (result) => {
-            console.log("======SID should be below here======")
-            console.log(result)
-            console.log("=====")
-          // res.redirect("/login")
-          // return res.render('login', { 'result': { 'loginSuccess': true } })
+        findUIDByGoogleID(email, googleID, (result) => {
+          console.log('======SID should be below here======')
+          console.log(result)
+          console.log('=====')
 
           if (result === false) {
             log.info('Failed login via Google')
@@ -232,13 +228,13 @@ const webserver = () => {
         })
       });
 
-  //app.get('/sms', (req, res) => {
+  // app.get('/sms', (req, res) => {
   //  res.render('sms');
-  //})
+  // })
 
-  //app.get('/otp', (req, res) => {
+  // app.get('/otp', (req, res) => {
   //  res.render('otp');
-  //})
+  // })
 
   app.post('/api', (req, res) => {
     console.log(req.fields)

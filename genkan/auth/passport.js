@@ -18,10 +18,8 @@ passport.deserializeUser(function(user, done) {
 });
 
 passport.use(new GoogleStrategy({
-  // clientID: config.genkan.GOOGLE_CLIENT_ID,
-  // clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,
-  clientID: '172774619079-ujcf3eu36nu61pc6bvelduv8t50hstnv.apps.googleusercontent.com',
-  clientSecret: 'DojUGFgTobZjv4WqibV5SDVI',
+  clientID: config.genkan.GOOGLE_CLIENT_ID,
+  clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,
   callbackURL: 'http://localhost:5000/google/callback',
   passReqToCallback: true,
 },
@@ -35,9 +33,9 @@ function(request, accessToken, refreshToken, profile, done) {
   // console.log(googleID);
   // login and register of user will happen here
   if (verified === true && emailVerified === true) {
-      loginAccountGoogle(email, googleID, (result) => {
-          console.log("Inside passport")
-          console.log(result)
+    loginAccountGoogle(email, googleID, (result) => {
+      console.log('Inside passport')
+      console.log(result)
     })
   } else {
     console.log('user is not verified')

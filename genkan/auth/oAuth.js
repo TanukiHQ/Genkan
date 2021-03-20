@@ -57,7 +57,6 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
         const SessionSchema = {
           'uid': result[0]._id,
           'sid': tokenGenerator(),
-          // Why is this in ISOString you ask? Because some stinky reason, MongoDB returns a completely empty object when attempting to .find().
           'timestamp': (new Date()).toISOString(),
           'createdTimestamp': new Date(),
         }
@@ -83,7 +82,6 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
         findDB(db, 'users', {'email': email}, (result) => {
           // If user has email in db
 
-          console.log(result[0]._id)
           if (result.length !== 0) {
             // Generate a random token for SID
             const sid = tokenGenerator()
@@ -92,7 +90,6 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
             const SessionSchema = {
               'uid': result[0]._id,
               'sid': tokenGenerator(),
-              // Why is this in ISOString you ask? Because some stinky reason, MongoDB returns a completely empty object when attempting to .find().
               'timestamp': (new Date()).toISOString(),
               'createdTimestamp': new Date(),
             }
@@ -116,9 +113,10 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
                   return callback(sid)
                 })
               })
-              // return callback(true);
             })
           } else {
+            const sid = tokenGenerator()
+
             // Random password generator here
             const password = generator.generate({
               length: 12,
@@ -158,8 +156,27 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
 
             // Insert new user into database
             insertDB(db, 'users', NewUserSchema, () => {
-              callback(true)
-              sendConfirmationEmail(email, emailConfirmationToken)
+              findUIDByGoogleID(email, null, (result) => {
+                // Schema for sessions in session collection
+                const SessionSchema = {
+                  'uid': result,
+                  'sid': tokenGenerator(),
+                  'timestamp': (new Date()).toISOString(),
+                  'createdTimestamp': new Date(),
+                }
+                // Payload to update user's last seen in users collection
+                const UpdateLastSeenPayload = {
+                  $set: {
+                    'account.activity.lastSeen': new Date(),
+                  },
+                }
+                insertDB(db, 'sessions', SessionSchema, () => {
+                  updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
+                    sendConfirmationEmail(email, emailConfirmationToken)
+                    return callback(sid)
+                  })
+                })
+              })
             })
           }
         })
