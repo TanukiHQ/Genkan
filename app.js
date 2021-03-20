@@ -132,8 +132,7 @@ const webserver = () => {
     })
 
     app.get('/login', (req, res) => {
-        log.debug(req.signedCookies.sid)
-        res.render('login')
+        res.render('login', { result: req.session.result })
     })
 
     app.post('/login', (req, res) => {
@@ -148,7 +147,9 @@ const webserver = () => {
                 loginAccount(email, password, (result) => {
                     if (result === false) {
                         log.info('Failed to login')
-                        return res.render('login', {'result': {'errCredentialsInvalid': true}})
+                        req.session.result = { 'errCredentialsInvalid': true }
+                        req.session.cookie.expires = 5000 // Only store this message for 5 seconds
+                        return res.redirect('/login')
                     }
 
                     log.info('Login OK')
