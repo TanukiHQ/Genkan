@@ -60,7 +60,7 @@ const CookieOptions = {
 }
 
 // Express session
-app.use(session({secret: config.genkan.secretKey, resave: false, saveUninitialized: false}));
+app.use(session({ secret: config.genkan.secretKey, resave: false, saveUninitialized: false }));
 
 // Formidable: For POST data accessing
 app.use(formidable());
