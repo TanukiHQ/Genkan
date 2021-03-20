@@ -167,14 +167,14 @@ const webserver = () => {
     })
 
     // Google OAuth2.0
-    app.get('/google',
-        passport.authenticate('google', {scope: ['email', 'profile']}));
+    // app.get('/google',
+    //     passport.authenticate('google', {scope: ['email', 'profile']}));
 
-    app.get('/google/callback',
-        passport.authenticate('google', {failureRedirect: '/login'}),
-        (req, res) => {
-            res.redirect('/');
-        });
+    // app.get('/google/callback',
+    //     passport.authenticate('google', {failureRedirect: '/login'}),
+    //     (req, res) => {
+    //         res.redirect('/');
+    //     });
 
     app.get('/sms', (req, res) => {
         res.render('sms');
