@@ -102,9 +102,6 @@ if (config.debugMode === true) {
 
 // Express: Routes
 const webserver = () => {
-    // Immediately starts at login page
-    app.get('/', (req, res) => res.render('login'))
-
     app.get('/signup', (req, res) => {
         res.render('signup')
     })
