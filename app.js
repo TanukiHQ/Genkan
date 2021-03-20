@@ -162,8 +162,7 @@ const webserver = () => {
     })
 
     app.get('/logout', (req, res) => {
-        req.session = null;
-        req.logout();
+        res.clearCookie('sid', CookieOptions);
         res.redirect('/');
     })
 
