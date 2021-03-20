@@ -123,11 +123,11 @@ const webserver = () => {
         newAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Duplicate account')
-                return res.render('signup', {'result': {'errDuplicateEmail': true}})
+                return res.render('signup', { 'result': { 'errDuplicateEmail': true } })
             }
 
             log.info('Account creation OK')
-            return res.render('signup', {'result': {'accountCreationSuccess': true}})
+            return res.render('signup', { 'result': { 'accountCreationSuccess': true } })
         })
     })
 
@@ -140,7 +140,7 @@ const webserver = () => {
         const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
         const password = req.fields.password
         const captcha = req.fields['g-recaptcha-response'];
-        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, function(captchaResults) {
+        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, function (captchaResults) {
             // skip captcha validation for testing purposes
             captchaResults = true;
             if (captchaResults === true) {
@@ -153,7 +153,7 @@ const webserver = () => {
 
                     log.info('Login OK')
                     res.cookie('sid', result, CookieOptions);
-                    return res.render('login', {'result': {'loginSuccess': true}})
+                    return res.render('login', { 'result': { 'loginSuccess': true } })
                 })
             } else {
                 log.info('Failed captcha check. Ignoring request.')
@@ -204,7 +204,7 @@ const webserver = () => {
         console.log(data)
     })
 
-    app.listen(config.webserver.port, function(err) {
+    app.listen(config.webserver.port, function (err) {
         if (err) throw log.error(err)
         log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
     })
