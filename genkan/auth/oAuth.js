@@ -39,6 +39,8 @@ const fs = require('fs')
 const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmation.hbs`, 'utf8');
 const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
 
+// NOTE: Will clean up and organise the code here
+
 MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
     if (err) throw err
 

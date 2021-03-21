@@ -7,20 +7,21 @@ const config = require(root + '/genkan/config');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 
-// // Will study and modify code here later on
 // Apparently these are all for the sessions
 // But however we do not need them as we stored them in the db and cookie is made at app.js
-// passport.serializeUser(function (user, done) {
-//  done(null, user.id);
-// });
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
 
-// passport.deserializeUser(function (email, done) {
-//    console.log(email)
+passport.deserializeUser(function(user, done) {
+//    console.log(user)
 //    console.log(done)
 //    console.log("deserialise")
-//    done(null, email);
-// });
+    done(null, user);
+});
 
+// Visit google console api to register for oAuth keys
+// https://console.developers.google.com
 passport.use(new GoogleStrategy({
     clientID: config.genkan.GOOGLE_CLIENT_ID,
     clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,

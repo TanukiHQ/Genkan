@@ -18,7 +18,6 @@ require(root + '/genkan/auth/passport')
 require(root + '/genkan/auth/oAuth')
 require(root + '/genkan/api')
 require(root + '/genkan/auth/logout')
-// require(root + "/genkan/auth/passport")
 
 // Express related modules
 const express = require('express')
@@ -208,8 +207,9 @@ const webserver = () => {
         {scope: ['email', 'profile'], prompt: 'select_account'},
     ));
 
+    // Session is false because we are using session stored in db
     app.get('/google/callback',
-        passport.authenticate('google', {failureRedirect: '/login', session: true}),
+        passport.authenticate('google', {failureRedirect: '/login', session: false}),
         (req, res) => {
             const email = req.user.email
             const googleID = req.user.id
