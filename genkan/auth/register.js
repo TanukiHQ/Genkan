@@ -61,6 +61,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
             const NewUserSchema = {
                 'email': email,
                 'password': hashedPasswordSHA512Bcrypt,
+                'googleID': null,
                 'account': {
                     'activity': {
                         'created': new Date(),

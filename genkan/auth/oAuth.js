@@ -23,12 +23,12 @@ const tokenGenerator = require('./tokenGenerator')
 // NodeMailer
 const nodemailer = require('nodemailer')
 const transporter = nodemailer.createTransport({
-  host: config.smtp.server,
-  port: config.smtp.port,
-  auth: {
-    user: config.smtp.username,
-    pass: config.smtp.password,
-  },
+    host: config.smtp.server,
+    port: config.smtp.port,
+    auth: {
+        user: config.smtp.username,
+        pass: config.smtp.password,
+    },
 });
 
 // Handlebars
@@ -40,160 +40,160 @@ const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmat
 const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
 
 MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
-  if (err) throw err
+    if (err) throw err
 
-  const db = client.db(dbName)
+    const db = client.db(dbName)
 
-  loginAccountGoogle = (email, googleID, callback) => {
+    loginAccountGoogle = (email, googleID, callback) => {
     // Checks if user has google id in db
-    findDB(db, 'users', {'email': email, 'googleID': googleID}, (result) => {
-      // If exists
-      // console.log(result)
-      if (result.length !== 0) {
-        // Generate a random token for SID
-        const sid = tokenGenerator()
+        findDB(db, 'users', {'email': email, 'googleID': googleID}, (result) => {
+            // If exists
+            // console.log(result)
+            if (result.length !== 0) {
+                // Generate a random token for SID
+                const sid = tokenGenerator()
 
-        // Schema for sessions in session collection
-        const SessionSchema = {
-          'uid': result[0]._id,
-          'sid': tokenGenerator(),
-          'timestamp': (new Date()).toISOString(),
-          'createdTimestamp': new Date(),
-        }
-        // Payload to update user's last seen in users collection
-        const UpdateLastSeenPayload = {
-          $set: {
-            'account.activity.lastSeen': new Date(),
-          },
-        }
-
-        // Update database
-        insertDB(db, 'sessions', SessionSchema, () => {
-          updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
-            return callback(sid)
-          })
-        })
-
-        // If google ID or email of user is not in db
-        // That means user is new or probably has existing email but no google ID present
-      } else {
-        // If user has email in db but google ID is not present
-        // We update db to include googleID
-        findDB(db, 'users', {'email': email}, (result) => {
-          // If user has email in db
-
-          if (result.length !== 0) {
-            // Generate a random token for SID
-            const sid = tokenGenerator()
-
-            // Schema for sessions in session collection
-            const SessionSchema = {
-              'uid': result[0]._id,
-              'sid': tokenGenerator(),
-              'timestamp': (new Date()).toISOString(),
-              'createdTimestamp': new Date(),
-            }
-            // Payload to update user's last seen in users collection
-            const UpdateLastSeenPayload = {
-              $set: {
-                'account.activity.lastSeen': new Date(),
-              },
-            }
-
-            const setGoogleID = {
-              $set: {
-                'googleID': googleID,
-              },
-            }
-
-            updateDB(db, 'users', {'email': email}, setGoogleID, () => {
-              // Update database
-              insertDB(db, 'sessions', SessionSchema, () => {
-                updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
-                  return callback(sid)
-                })
-              })
-            })
-          } else {
-            const sid = tokenGenerator()
-
-            // Random password generator here
-            const password = generator.generate({
-              length: 12,
-              strict: true,
-            });
-
-            // SHA512 Hashing
-            const hashedPasswordSHA512 = sha512({
-              a: password,
-              b: email + config.genkan.secretKey,
-            })
-
-            // Bcrypt Hashing
-            const hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
-
-            // Generate email confirmation token
-            const emailConfirmationToken = tokenGenerator()
-
-            const NewUserSchema = {
-              'email': email,
-              'password': hashedPasswordSHA512Bcrypt,
-              'googleID': googleID,
-              'account': {
-                'activity': {
-                  'created': new Date(),
-                  'lastSeen': null,
-                },
-                'type': 'STANDARD',
-                'suspended': false,
-                'emailVerified': false,
-              },
-              'tokens': {
-                'emailConfirmation': emailConfirmationToken,
-              },
-            }
-
-
-            // Insert new user into database
-            insertDB(db, 'users', NewUserSchema, () => {
-              findUIDByGoogleID(email, null, (result) => {
                 // Schema for sessions in session collection
                 const SessionSchema = {
-                  'uid': result,
-                  'sid': tokenGenerator(),
-                  'timestamp': (new Date()).toISOString(),
-                  'createdTimestamp': new Date(),
+                    'uid': result[0]._id,
+                    'sid': tokenGenerator(),
+                    'timestamp': (new Date()).toISOString(),
+                    'createdTimestamp': new Date(),
                 }
                 // Payload to update user's last seen in users collection
                 const UpdateLastSeenPayload = {
-                  $set: {
-                    'account.activity.lastSeen': new Date(),
-                  },
+                    $set: {
+                        'account.activity.lastSeen': new Date(),
+                    },
                 }
-                insertDB(db, 'sessions', SessionSchema, () => {
-                  updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
-                    sendConfirmationEmail(email, emailConfirmationToken)
-                    return callback(sid)
-                  })
-                })
-              })
-            })
-          }
-        })
-      }
-    })
-  }
 
-  // This is for the inserting uid into cookie
-  findUIDByGoogleID = (email, googleID, callback) => {
-    findDB(db, 'users', {'email': email}, (result) => {
-      if (result.length !== 0) {
-        const uid = result[0]._id
-        callback(uid);
-      } else {
-        callback(false);
-      }
-    })
-  }
-  module.exports = findUIDByGoogleID
+                // Update database
+                insertDB(db, 'sessions', SessionSchema, () => {
+                    updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
+                        return callback(sid)
+                    })
+                })
+
+                // If google ID or email of user is not in db
+                // That means user is new or probably has existing email but no google ID present
+            } else {
+                // If user has email in db but google ID is not present
+                // We update db to include googleID
+                findDB(db, 'users', {'email': email}, (result) => {
+                    // If user has email in db
+
+                    if (result.length !== 0) {
+                        // Generate a random token for SID
+                        const sid = tokenGenerator()
+
+                        // Schema for sessions in session collection
+                        const SessionSchema = {
+                            'uid': result[0]._id,
+                            'sid': tokenGenerator(),
+                            'timestamp': (new Date()).toISOString(),
+                            'createdTimestamp': new Date(),
+                        }
+                        // Payload to update user's last seen in users collection
+                        const UpdateLastSeenPayload = {
+                            $set: {
+                                'account.activity.lastSeen': new Date(),
+                            },
+                        }
+
+                        const setGoogleID = {
+                            $set: {
+                                'googleID': googleID,
+                            },
+                        }
+
+                        updateDB(db, 'users', {'email': email}, setGoogleID, () => {
+                            // Update database
+                            insertDB(db, 'sessions', SessionSchema, () => {
+                                updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
+                                    return callback(sid)
+                                })
+                            })
+                        })
+                    } else {
+                        const sid = tokenGenerator()
+
+                        // Random password generator here
+                        const password = generator.generate({
+                            length: 12,
+                            strict: true,
+                        });
+
+                        // SHA512 Hashing
+                        const hashedPasswordSHA512 = sha512({
+                            a: password,
+                            b: email + config.genkan.secretKey,
+                        })
+
+                        // Bcrypt Hashing
+                        const hashedPasswordSHA512Bcrypt = bcrypt.hashSync(hashedPasswordSHA512, saltRounds)
+
+                        // Generate email confirmation token
+                        const emailConfirmationToken = tokenGenerator()
+
+                        const NewUserSchema = {
+                            'email': email,
+                            'password': hashedPasswordSHA512Bcrypt,
+                            'googleID': googleID,
+                            'account': {
+                                'activity': {
+                                    'created': new Date(),
+                                    'lastSeen': null,
+                                },
+                                'type': 'STANDARD',
+                                'suspended': false,
+                                'emailVerified': false,
+                            },
+                            'tokens': {
+                                'emailConfirmation': emailConfirmationToken,
+                            },
+                        }
+
+
+                        // Insert new user into database
+                        insertDB(db, 'users', NewUserSchema, () => {
+                            findUIDByGoogleID(email, null, (result) => {
+                                // Schema for sessions in session collection
+                                const SessionSchema = {
+                                    'uid': result,
+                                    'sid': tokenGenerator(),
+                                    'timestamp': (new Date()).toISOString(),
+                                    'createdTimestamp': new Date(),
+                                }
+                                // Payload to update user's last seen in users collection
+                                const UpdateLastSeenPayload = {
+                                    $set: {
+                                        'account.activity.lastSeen': new Date(),
+                                    },
+                                }
+                                insertDB(db, 'sessions', SessionSchema, () => {
+                                    updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
+                                        sendConfirmationEmail(email, emailConfirmationToken)
+                                        return callback(sid)
+                                    })
+                                })
+                            })
+                        })
+                    }
+                })
+            }
+        })
+    }
+
+    // This is for the inserting uid into cookie
+    findUIDByGoogleID = (email, googleID, callback) => {
+        findDB(db, 'users', {'email': email}, (result) => {
+            if (result.length !== 0) {
+                const uid = result[0]._id
+                callback(uid);
+            } else {
+                callback(false);
+            }
+        })
+    }
+    module.exports = findUIDByGoogleID
 })

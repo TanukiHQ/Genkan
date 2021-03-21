@@ -22,25 +22,25 @@ const GoogleStrategy = require('passport-google-oauth2').Strategy;
 // });
 
 passport.use(new GoogleStrategy({
-  clientID: config.genkan.GOOGLE_CLIENT_ID,
-  clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'http://localhost:5000/google/callback',
+    clientID: config.genkan.GOOGLE_CLIENT_ID,
+    clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,
+    callbackURL: 'http://localhost:5000/google/callback',
 },
 function(accessToken, refreshToken, profile, done) {
-  // console.log(profile);
-  const googleID = profile.id;
-  // const displayName = profile.displayName;
-  const email = profile.email;
-  const verified = profile.verified;
-  const emailVerified = profile.email_verified;
-  // console.log(googleID);
-  // We check if google user is verified and has its email verified
-  if (verified === true && emailVerified === true) {
-    loginAccountGoogle(email, googleID, (result) => {
-      return done(null, profile);
-    })
-  } else {
-    return done(null, false);
-  }
+    // console.log(profile);
+    const googleID = profile.id;
+    // const displayName = profile.displayName;
+    const email = profile.email;
+    const verified = profile.verified;
+    const emailVerified = profile.email_verified;
+    // console.log(googleID);
+    // We check if google user is verified and has its email verified
+    if (verified === true && emailVerified === true) {
+        loginAccountGoogle(email, googleID, (result) => {
+            return done(null, profile);
+        })
+    } else {
+        return done(null, false);
+    }
 },
 ));
