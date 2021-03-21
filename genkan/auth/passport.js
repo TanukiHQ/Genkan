@@ -7,23 +7,26 @@ const config = require(root + '/genkan/config');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 
+// // Will study and modify code here later on
+// Apparently these are all for the sessions
+// But however we do not need them as we stored them in the db and cookie is made at app.js
+// passport.serializeUser(function (user, done) {
+//  done(null, user.id);
+// });
 
-// Will study and modify code here later on
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
+// passport.deserializeUser(function (email, done) {
+//    console.log(email)
+//    console.log(done)
+//    console.log("deserialise")
+//    done(null, email);
+// });
 
 passport.use(new GoogleStrategy({
   clientID: config.genkan.GOOGLE_CLIENT_ID,
   clientSecret: config.genkan.GOOGLE_CLIENT_SECRET,
   callbackURL: 'http://localhost:5000/google/callback',
-  passReqToCallback: true,
 },
-function(request, accessToken, refreshToken, profile, done) {
+function(accessToken, refreshToken, profile, done) {
   // console.log(profile);
   const googleID = profile.id;
   // const displayName = profile.displayName;
@@ -31,15 +34,13 @@ function(request, accessToken, refreshToken, profile, done) {
   const verified = profile.verified;
   const emailVerified = profile.email_verified;
   // console.log(googleID);
-  // login and register of user will happen here
+  // We check if google user is verified and has its email verified
   if (verified === true && emailVerified === true) {
     loginAccountGoogle(email, googleID, (result) => {
-      console.log('Inside passport')
-      console.log(result)
+      return done(null, profile);
     })
   } else {
-    console.log('user is not verified')
+    return done(null, false);
   }
-  return done(null, profile);
 },
 ));

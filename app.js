@@ -165,7 +165,6 @@ const webserver = () => {
   })
 
   app.get('/login', (req, res) => {
-    // log.debug(req.signedCookies.sid)
     res.render('login', {result: req.session.result})
   })
 
@@ -208,15 +207,11 @@ const webserver = () => {
   ));
 
   app.get('/google/callback',
-      passport.authenticate('google', {failureRedirect: '/login'}),
+      passport.authenticate('google', {failureRedirect: '/login', session: true}),
       (req, res) => {
         const email = req.user.email
         const googleID = req.user.id
         findUIDByGoogleID(email, googleID, (result) => {
-          console.log('======SID should be below here======')
-          console.log(result)
-          console.log('=====')
-
           if (result === false) {
             log.info('Failed login via Google')
             res.redirect('/login');
