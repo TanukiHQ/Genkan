@@ -196,11 +196,11 @@ const webserver = () => {
         if (data.requestType === 'CHECK_LOGIN_STATUS') {
             getSessionStatus(data, (result) => {
                 console.log(result)
-                return res.send(result)
+                return res.json(result)
             })
         } else if (data.requestType === 'GET_USER') {
             getUserObject(data, ((result) => {
-                return res.send(result)
+                return res.json(result)
             }))
         }
 
