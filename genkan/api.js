@@ -10,7 +10,6 @@ require('./db')
 
 // API data decryption
 const Cryptr = require('cryptr');
-const cryptr = new Cryptr(config.genkan.secretKey);
 
 // Module Imports
 require('./auth/login')
@@ -19,6 +18,9 @@ require('./auth/login')
 // STANDALONE FUNCTIONS
 
 decapsulateDencryptPayloadAndParse = (encryptedData) => {
+    // Load password
+    const cryptr = new Cryptr(config.genkan.secretKey);
+
     // Decrypt data
     const decryptedData = cryptr.decrypt(encryptedData.data)
 
