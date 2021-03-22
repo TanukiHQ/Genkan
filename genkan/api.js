@@ -30,7 +30,7 @@ decapsulateDencryptPayloadAndParse = (encryptedData) => {
 
 getSessionStatus = (data, callback) => {
     // Check whether API key matches stored
-    if (data.apikey !== config.genkan.globalAPIKey || data.apikey.length === 40) {
+    if (data.apikey !== config.genkan.api.globalAPIKey) {
         console.log('Rejected an API request: Key invalid or mismatched.')
         return callback({'status': 401})
     }
@@ -52,7 +52,7 @@ getSessionStatus = (data, callback) => {
 
 getUserObject = (data, callback) => {
     // Check whether API key matches stored
-    if (data.apikey !== config.genkan.globalAPIKey || data.apikey.length === 40) {
+    if (data.apikey !== config.genkan.api.globalAPIKey) {
         console.log('Rejected an API request: Key invalid or mismatched.')
         return callback({'status': 401})
     }
