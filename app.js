@@ -108,7 +108,7 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
     app.get('/signup', (req, res) => {
-        res.render('signup')
+        res.render('signup', { result: req.session.result })
     })
 
     app.post('/signup', (req, res) => {
@@ -123,7 +123,9 @@ const webserver = () => {
         newAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Duplicate account')
-                return res.render('signup', { 'result': { 'errDuplicateEmail': true } })
+                req.session.result = { 'errDuplicateEmail': true }
+                req.session.cookie.expires = 5000 // Only store this message for 5 seconds
+                return res.redirect('/signup')
             }
 
             log.info('Account creation OK')
