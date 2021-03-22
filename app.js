@@ -49,13 +49,13 @@ app.set('views', [
 ])
 
 // cookieParser: Secret key for signing
-app.use(cookieParser(config.genkan.secretKey))
+app.use(cookieParser())
 
 // cookieParser: Cookie schema
 const CookieOptions = {
     httpOnly: true,
     secure: true,
-    signed: true,
+    // signed: true,
     domain: `.${config.webserver.domain}`,
 }
 
