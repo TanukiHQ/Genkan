@@ -20,25 +20,6 @@ const generator = require('generate-password');
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
 
-// NodeMailer
-const nodemailer = require('nodemailer')
-const transporter = nodemailer.createTransport({
-    host: config.smtp.server,
-    port: config.smtp.port,
-    auth: {
-        user: config.smtp.username,
-        pass: config.smtp.password,
-    },
-});
-
-// Handlebars
-const Handlebars = require('handlebars')
-
-// Email Template
-const fs = require('fs')
-const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmation.hbs`, 'utf8');
-const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
-
 // NOTE: Will clean up and organise the code here
 
 MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
@@ -120,6 +101,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
                         const sid = tokenGenerator()
 
                         // Random password generator here
+                        // Strict mode to ensure that password generated contains uppercase, lowercase, numeric and special characters
                         const password = generator.generate({
                             length: 12,
                             strict: true,
@@ -154,7 +136,6 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
                                 'emailConfirmation': emailConfirmationToken,
                             },
                         }
-
 
                         // Insert new user into database
                         insertDB(db, 'users', NewUserSchema, () => {

@@ -1,4 +1,4 @@
-//Module Imports
+// Module Imports
 const fetch = require('node-fetch');
 
 // Google Recaptcha V3 Documentation

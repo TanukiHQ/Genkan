@@ -119,10 +119,13 @@ const webserver = () => {
 
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         // NOTE : Will put password checker in a function so its reusable
+        // Email regex to test if input is in email format
         if (emailRegex.test(email) === false) {
             log.warn('Email is invalid.')
             return res.render('signup', {'result': {'errInvalidEmail': true}})
-        } else if (password == null) {
+        }
+        // Password checks to ensure they meet the minimum security requirements
+         else if (password == null) {
             log.warn('Password field is empty.')
             return res.render('signup', {'result': {'errInvalidPassword': true}})
         } else if (password.length < 8) {

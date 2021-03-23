@@ -7,6 +7,9 @@ const jsonfile = require('jsonfile')
 // Get root of project
 const root = require('app-root-path')
 
+// For generation of API key
+const sha1 = require('hash-anything').sha1
+
 // Logging
 const log = require('loglevel')
 const prefix = require('loglevel-plugin-prefix')
