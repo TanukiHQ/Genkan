@@ -1,5 +1,8 @@
 const fetch = require('node-fetch');
 
+// Google Recaptcha V3 Documentation
+// https://www.google.com/recaptcha/about/
+
 captchaValidation = function(captchaResponse, secretKey, callback) {
     // For reference
     // const siteUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string';
