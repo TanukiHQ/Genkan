@@ -1,3 +1,4 @@
+//Module Imports
 const fetch = require('node-fetch');
 
 // Google Recaptcha V3 Documentation
@@ -7,6 +8,7 @@ captchaValidation = function(captchaResponse, secretKey, callback) {
     // For reference
     // const siteUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=your_secret&response=response_string';
 
+    // Validate existence of secret key and captchaResponse
     if (captchaResponse === undefined || captchaResponse === '' || captchaResponse === null) {
         return callback(false);
     } else if (secretKey === undefined || secretKey === '' || secretKey === null) {
@@ -20,7 +22,9 @@ captchaValidation = function(captchaResponse, secretKey, callback) {
         fetch(verifyURL)
             .then((res) => res.json())
             .then((json) => {
+                // We receive a json response from the api
                 const bodyContent = json;
+                // We check if success is true/false
                 const isSuccess = bodyContent['success'];
                 // you can set the minimum scores at google recaptcha admin console
 

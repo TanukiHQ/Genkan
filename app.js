@@ -203,6 +203,7 @@ const webserver = () => {
     })
 
     // Google OAuth2.0
+    // We prompt the user to choose an account whenever /google is called
     app.get('/google', passport.authenticate('google',
         {scope: ['email', 'profile'], prompt: 'select_account'},
     ));
