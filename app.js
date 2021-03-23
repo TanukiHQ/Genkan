@@ -50,13 +50,13 @@ app.set('views', [
 ])
 
 // cookieParser: Secret key for signing
-app.use(cookieParser(config.genkan.secretKey))
+app.use(cookieParser())
 
 // cookieParser: Cookie schema
 const CookieOptions = {
     httpOnly: true,
     secure: true,
-    signed: true,
+    // signed: true,
     domain: `.${config.webserver.domain}`,
 }
 
@@ -109,7 +109,7 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
     app.get('/signup', (req, res) => {
-        res.render('signup')
+        res.render('signup', { result: req.session.result })
     })
 
     app.post('/signup', (req, res) => {
@@ -242,11 +242,11 @@ const webserver = () => {
         if (data.requestType === 'CHECK_LOGIN_STATUS') {
             getSessionStatus(data, (result) => {
                 console.log(result)
-                return res.send(result)
+                return res.json(result)
             })
         } else if (data.requestType === 'GET_USER') {
             getUserObject(data, ((result) => {
-                return res.send(result)
+                return res.json(result)
             }))
         }
 
