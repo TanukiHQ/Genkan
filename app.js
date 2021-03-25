@@ -23,11 +23,11 @@ require(root + '/genkan/auth/logout')
 const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const formidable = require('express-formidable');
-const slowDown = require('express-slow-down');
-const passport = require('passport');
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+const formidable = require('express-formidable')
+const slowDown = require('express-slow-down')
+const passport = require('passport')
 
 // Express Additional Options
 // Express: Public Directory
