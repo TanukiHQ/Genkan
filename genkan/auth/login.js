@@ -39,7 +39,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
                 // Schema for sessions in session collection
                 const SessionSchema = {
                     'uid': result[0]._id,
-                    'sid': sid,
+                    'sid': tokenGenerator(),
                     // Why is this in ISOString you ask? Because some stinky reason, MongoDB returns a completely empty object when attempting to .find().
                     'timestamp': (new Date()).toISOString(),
                     'createdTimestamp': new Date(),
@@ -65,10 +65,10 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
         })
     }
 
-    checkAndRenewSession = (sid, callback) => {
+    inLoggedin = (sid, callback) => {
         findDB(db, 'sessions', {'sid': sid}, (result) => {
             if (result.length !== 1) {
-                return callback(false)
+                callback(false)
             }
 
             // Get time difference between last accessed date and current date
@@ -96,5 +96,4 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
     }
 
     module.exports = loginAccount
-    module.exports = checkAndRenewSession
 })
