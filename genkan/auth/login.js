@@ -14,7 +14,7 @@ const bcrypt = require('bcrypt');
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
 
-MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
+MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     if (err) throw err
 
     const db = client.db(dbName)
@@ -26,7 +26,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
         })
 
         // Find account to get stored hashed
-        findDB(db, 'users', {'email': email}, (result) => {
+        findDB(db, 'users', { 'email': email }, (result) => {
             // If no account found
             if (result.length !== 1) {
                 return callback(false)
@@ -54,7 +54,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
 
                 // Update database
                 insertDB(db, 'sessions', SessionSchema, () => {
-                    updateDB(db, 'users', {'email': email}, UpdateLastSeenPayload, () => {
+                    updateDB(db, 'users', { 'email': email }, UpdateLastSeenPayload, () => {
                         return callback(sid)
                     })
                 })
@@ -78,7 +78,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays > 31) {
-                deleteDB(db, 'sessions', {'sid': sid}, () => {
+                deleteDB(db, 'sessions', { 'sid': sid }, () => {
                     return callback(false)
                 })
             }
@@ -89,7 +89,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
                 },
             }
 
-            updateDB(db, 'sessions', {'sid': sid}, UpdateTimestampPayload, () => {
+            updateDB(db, 'sessions', { 'sid': sid }, UpdateTimestampPayload, () => {
                 callback(true)
             })
         })
