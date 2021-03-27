@@ -65,8 +65,8 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
         })
     }
 
-    inLoggedin = (sid, callback) => {
-        findDB(db, 'sessions', {'sid': sid}, (result) => {
+    isLoggedin = (sid, callback) => {
+        findDB(db, 'sessions', { 'sid': sid }, (result) => {
             if (result.length !== 1) {
                 callback(false)
             }
