@@ -47,7 +47,7 @@ isAuthenticated = (clientOptions, sid) => {
                 updateDB(db, 'sessions', { 'sid': sid }, UpdateTimestampPayload, () => {
                     client.close()
                     // Return session object
-                    return resolve({ status: "OK", result: result })
+                    return resolve({ status: 'OK', result: result })
                 })
             })
         })
@@ -76,7 +76,7 @@ getUserFromUID = (clientOptions, uid) => {
                 delete userObj.password // Remove password field from reply
 
                 // If all is well, return 200 with user object
-                return resolve({ status: "OK", result: userObj })
+                return resolve({ status: 'OK', result: userObj })
             })
         })
     })
@@ -101,7 +101,7 @@ getUserFromSID = (clientOptions, sid) => {
 
                 getUserFromUID(clientOptions, result[0].uid)
                     .then((userObj) => {
-                        return resolve({ status: "OK", result: userObj })
+                        return resolve({ status: 'OK', result: userObj })
                     })
                     .catch((err) => {
                         return resolve({ status: err })
@@ -136,7 +136,7 @@ doLogout = (clientOptions, sid) => {
                 deleteDB(db, 'sessions', { 'sid': sid }, () => {
                     updateDB(db, 'users', { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
                         client.close()
-                        return resolve({ status: "OK", result: sid })
+                        return resolve({ status: 'OK', result: sid })
                     })
                 })
             })
