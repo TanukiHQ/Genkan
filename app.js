@@ -10,11 +10,11 @@ const theme = `genkan-theme-${config.genkan.theme}`
 const root = require('app-root-path')
 
 // Module imports
-require(root + '/genkan/auth/login')
-require(root + '/genkan/auth/register')
+require(root + '/genkan/core/login')
+require(root + '/genkan/core/register')
 require(root + '/genkan/db')
-require(root + '/genkan/auth/recaptchaValidation')
-require(root + '/genkan/auth/logout')
+require(root + '/genkan/core/recaptchaValidation')
+require(root + '/genkan/core/logout')
 // require(root + "/genkan/auth/passport")
 
 // Express related modules

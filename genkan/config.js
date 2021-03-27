@@ -1,5 +1,5 @@
 // Token Generator
-require('./auth/tokenGenerator')
+require('./core/tokenGenerator')
 
 // JSON writer
 const jsonfile = require('jsonfile')
