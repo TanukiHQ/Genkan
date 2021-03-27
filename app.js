@@ -59,7 +59,7 @@ const CookieOptions = {
 }
 
 // Express session
-app.use(session({secret: config.genkan.secretKey, resave: false, saveUninitialized: false}));
+app.use(session({ secret: config.genkan.secretKey, resave: false, saveUninitialized: false }));
 
 // Formidable: For POST data accessing
 app.use(formidable());
@@ -107,7 +107,7 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
     app.get('/signup', (req, res) => {
-        res.render('signup', {result: req.session.result})
+        res.render('signup', { result: req.session.result })
     })
 
     app.post('/signup', (req, res) => {
@@ -123,25 +123,25 @@ const webserver = () => {
         newAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Duplicate account')
-                req.session.result = {'errDuplicateEmail': true}
+                req.session.result = { 'errDuplicateEmail': true }
                 req.session.cookie.expires = 5000 // Only store this message for 5 seconds
                 return res.redirect('/signup')
             }
 
             log.info('Account creation OK')
-            return res.render('signup', {'result': {'accountCreationSuccess': true}})
+            return res.render('signup', { 'result': { 'accountCreationSuccess': true } })
         })
     })
 
     app.get('/login', (req, res) => {
-        res.render('login', {result: req.session.result})
+        res.render('login', { result: req.session.result })
     })
 
     app.post('/login', (req, res) => {
         const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
         const password = req.fields.password
         const captcha = req.fields['g-recaptcha-response'];
-        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, function(captchaResults) {
+        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, (captchaResults) => {
             // skip captcha validation for testing purposes
             captchaResults = true;
             if (captchaResults === true) {
@@ -149,14 +149,14 @@ const webserver = () => {
                 loginAccount(email, password, (result) => {
                     if (result === false) {
                         log.info('Failed to login')
-                        req.session.result = {'errCredentialsInvalid': true}
+                        req.session.result = { 'errCredentialsInvalid': true }
                         req.session.cookie.expires = 5000 // Only store this message for 5 seconds
                         return res.redirect('/login')
                     }
 
                     log.info('Login OK')
                     res.cookie('sid', result, CookieOptions);
-                    return res.render('login', {'result': {'loginSuccess': true}})
+                    return res.render('login', { 'result': { 'loginSuccess': true } })
                 })
             } else {
                 log.info('Failed captcha check. Ignoring request.')
@@ -190,7 +190,7 @@ const webserver = () => {
     //     res.render('otp');
     // })
 
-    app.listen(config.webserver.port, function(err) {
+    app.listen(config.webserver.port, (err) => {
         if (err) throw log.error(err)
         log.debug(`Web server & Socket.io listening on port ${config.webserver.port}.`)
     })
