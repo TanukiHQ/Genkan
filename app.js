@@ -116,6 +116,10 @@ const webserver = () => {
 
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
+        // Data validations
+        if (emailRegex.test(email) === false || password.length < 8) return
+
+
         newAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Duplicate account')
