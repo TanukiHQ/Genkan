@@ -67,7 +67,7 @@ const generateNewConfig = () => {
 
     const file = './config.json'
 
-    jsonfile.writeFileSync(file, ConfigSchema, {spaces: 2})
+    jsonfile.writeFileSync(file, ConfigSchema, { spaces: 2 })
 }
 
 try {

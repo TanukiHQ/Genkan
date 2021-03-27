@@ -36,11 +36,11 @@ const fs = require('fs')
 const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmation.hbs`, 'utf8');
 const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
 
-MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
+MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     const db = client.db(dbName)
     newAccount = (email, password, callback) => {
     // Check for duplicate accounts
-        findDB(db, 'users', {'email': email}, (result) => {
+        findDB(db, 'users', { 'email': email }, (result) => {
             // Reject if duplicate
             if (result.length !== 0) {
                 return callback(false)
@@ -101,7 +101,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
     }
 
     confirmEmail = (token, callback) => {
-        findDB(db, 'users', {'tokens.emailConfirmation': token}, (result) => {
+        findDB(db, 'users', { 'tokens.emailConfirmation': token }, (result) => {
             if (result.length !== 1) {
                 return callback(false)
             }
@@ -114,7 +114,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
                 },
             }
 
-            updateDB(db, 'users', {'tokens.emailConfirmation': token}, AccountActivatePayload, () => {
+            updateDB(db, 'users', { 'tokens.emailConfirmation': token }, AccountActivatePayload, () => {
                 callback(true)
             })
         })

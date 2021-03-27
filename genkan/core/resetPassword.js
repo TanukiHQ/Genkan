@@ -11,11 +11,11 @@ require('../db')
 const sha512 = require('hash-anything').sha512
 const bcrypt = require('bcrypt');
 
-MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
+MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     const db = client.db(dbName)
 
     resetPassword = (resetPasswordToken, newPassword, callback) => {
-        findDB(db, 'users', {'resetPassword': resetPasswordToken}, (result) => {
+        findDB(db, 'users', { 'resetPassword': resetPasswordToken }, (result) => {
             if (result.length !== 1) {
                 return callback(false)
             }
@@ -35,7 +35,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
                 },
             }
 
-            insertDB(db, 'users', {'resetPassword': resetPasswordToken}, SetPasswordPayload, () => {
+            insertDB(db, 'users', { 'resetPassword': resetPasswordToken }, SetPasswordPayload, () => {
                 callback(true)
             })
         })
