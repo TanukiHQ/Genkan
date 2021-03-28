@@ -118,7 +118,7 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
     app.get('/signup', (req, res) => {
-        res.render('signup', { notifs: req.cookies.notifs })
+        res.render('signup', { notifs: req.signedCookies.notifs })
     })
 
     app.post('/signup', (req, res) => {
@@ -143,7 +143,7 @@ const webserver = () => {
     })
 
     app.get('/login', (req, res) => {
-        res.render('login', { notifs: req.cookies.notifs })
+        res.render('login', { notifs: req.signedCookies.notifs })
     })
 
     app.post('/login', (req, res) => {
