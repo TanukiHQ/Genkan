@@ -150,6 +150,17 @@ const webserver = () => {
             return res.redirect('/login')
         }
 
+        // Check if user is wanting to do an email confirmation
+        if (req.query.token !== undefined) {
+            confirmEmail(req.query.token, (result) => {
+                if (result === false) {
+                    return res.render('confirmEmail', { notifs: "ERR_EMAIL_TOKEN_INVALID" })
+                }
+
+                return res.render('confirmEmail', { notifs: "OK_EMAIL_CONFIRMED" })
+            })
+        }
+
         // Else give them the email confirmation page
         return res.render('confirmEmail', { userEmailAddress: req.signedCookies.preData })
     })
