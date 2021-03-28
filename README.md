@@ -28,7 +28,7 @@ git clone https://github.com/HakkouHQ/Genkan.git
 ## Setup
 
 Install all necessary node modules with the following command. 
-The default theme for Genkan, [Uchi](https://github.com/HakkouHQ/genkan-theme-uchi) will be installed as well.
+The default theme for Genkan, [Uchi](https://github.com/HakkouHQ/genkan-theme-uchi), will be installed as well.
 
 ```
 npm i
@@ -47,3 +47,6 @@ nodemon
 
 Running Genkan for the first time will generate a `config.json` file if it doesn't detect any existing `config.json` file.
 Run Genkan again with the following command above and open `http://localhost:5000/login` in your browser.
+
+## License
+- [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.en.html)
