@@ -51,18 +51,20 @@ app.use(cookieParser(config.genkan.secretKey))
 const SessionCookieOptions = {
     httpOnly: true,
     secure: false,
-    signed: true,
+    signed: false,
     domain: `.${config.webserver.domain}`,
-    maxAge: 7890000
+    maxAge: 7890000,
+    path: '/'
 }
 
 // cookieParser: Cookie schema for notifications
 const NotificationCookieOptions = {
     httpOnly: true,
     secure: false,
-    signed: true,
+    signed: false,
     domain: `.${config.webserver.domain}`,
-    maxAge: 5000
+    maxAge: 5000,
+    path: '/'
 }
 
 // Formidable: For POST data accessing
@@ -107,7 +109,7 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
     app.get('/signup', (req, res) => {
-        res.render('signup', { notifs: res.cookie.notifs })
+        res.render('signup', { notifs: req.cookies.notifs })
     })
 
     app.post('/signup', (req, res) => {
@@ -118,7 +120,6 @@ const webserver = () => {
 
         // Data validations
         if (emailRegex.test(email) === false || password.length < 8) return
-
 
         newAccount(email, password, (result) => {
             if (result === false) {
@@ -133,13 +134,13 @@ const webserver = () => {
     })
 
     app.get('/login', (req, res) => {
-        res.render('login', { result: req.session.result })
+        res.render('login', { result: req.cookies.notifs })
     })
 
     app.post('/login', (req, res) => {
         const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
         const password = req.fields.password
-        
+
         loginAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Failed to login')
@@ -148,7 +149,7 @@ const webserver = () => {
             }
 
             log.info('Login OK')
-            res.cookie('sid', result, SessionCookieOptions);
+            res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain:`.${config.webserver.domain}`  });
             return res.render('login', { 'result': { 'loginSuccess': true } })
         })
     })
