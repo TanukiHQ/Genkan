@@ -107,7 +107,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             }
             const AccountActivatePayload = {
                 $unset: {
-                    'tokens.emailConfirmation': true,
+                    'tokens.emailConfirmation': 1,
                 },
                 $set: {
                     'account.emailVerified': true,
