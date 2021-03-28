@@ -138,8 +138,20 @@ const webserver = () => {
             }
 
             log.info('Account creation OK')
-            return res.render('signup', { 'result': { 'accountCreationSuccess': true } })
+
+            res.cookie('preData', email, NotificationCookieOptions)
+            return res.redirect('/confirm-email-address')
         })
+    })
+
+    app.get('/confirm-email-address', (req, res) => {
+        // If user isn't supposed to be on this page (possible directory traversal)
+        if (req.signedCookies.preData === undefined) {
+            return res.redirect('/login')
+        }
+
+        // Else give them the email confirmation page
+        return res.render('confirmEmail', { userEmailAddress: req.signedCookies.preData })
     })
 
     app.get('/login', (req, res) => {
