@@ -43,8 +43,8 @@ app.engine('hbs', exphbs({
             } else {
                 return false
             }
-        }
-    }
+        },
+    },
 }))
 
 // Handlebars: Views folder
@@ -63,7 +63,7 @@ const SessionCookieOptions = {
     signed: true,
     domain: `.${config.webserver.domain}`,
     maxAge: 7890000,
-    path: '/'
+    path: '/',
 }
 
 // cookieParser: Cookie schema for notifications
@@ -73,7 +73,7 @@ const NotificationCookieOptions = {
     signed: true,
     domain: `.${config.webserver.domain}`,
     maxAge: 5000,
-    path: '/'
+    path: '/',
 }
 
 // Formidable: For POST data accessing
@@ -133,7 +133,7 @@ const webserver = () => {
         newAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Duplicate account')
-                res.cookie('notifs', "ERR_DUP_EMAIL", NotificationCookieOptions)
+                res.cookie('notifs', 'ERR_DUP_EMAIL', NotificationCookieOptions)
                 return res.redirect('/signup')
             }
 
@@ -153,12 +153,12 @@ const webserver = () => {
         loginAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Failed to login')
-                res.cookie('notifs', "ERR_CREDS_INVALID", NotificationCookieOptions)
+                res.cookie('notifs', 'ERR_CREDS_INVALID', NotificationCookieOptions)
                 return res.redirect('/login')
             }
 
             log.info('Login OK')
-            res.cookie('sid', result, SessionCookieOptions);
+            res.cookie('sid', result, SessionCookieOptions)
             return res.render('login', { 'result': { 'loginSuccess': true } })
         })
     })
