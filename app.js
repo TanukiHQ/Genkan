@@ -15,17 +15,14 @@ require(root + '/genkan/core/register')
 require(root + '/genkan/db')
 require(root + '/genkan/core/recaptchaValidation')
 require(root + '/genkan/core/logout')
-// require(root + "/genkan/auth/passport")
 
 // Express related modules
 const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
-const session = require('express-session');
 const formidable = require('express-formidable')
 const slowDown = require('express-slow-down')
-const passport = require('passport')
 
 // Express Additional Options
 // Express: Public Directory
@@ -48,25 +45,28 @@ app.set('views', [
 ])
 
 // cookieParser: Secret key for signing
-app.use(cookieParser())
+app.use(cookieParser(config.genkan.secretKey))
 
-// cookieParser: Cookie schema
-const CookieOptions = {
+// cookieParser: Cookie schema for sessions
+const SessionCookieOptions = {
     httpOnly: true,
-    secure: true,
+    secure: false,
     signed: true,
     domain: `.${config.webserver.domain}`,
+    maxAge: 7890000
 }
 
-// Express session
-app.use(session({ secret: config.genkan.secretKey, resave: false, saveUninitialized: false }));
+// cookieParser: Cookie schema for notifications
+const NotificationCookieOptions = {
+    httpOnly: true,
+    secure: false,
+    signed: true,
+    domain: `.${config.webserver.domain}`,
+    maxAge: 5000
+}
 
 // Formidable: For POST data accessing
 app.use(formidable())
-
-// Initializes passport and passport sessions
-app.use(passport.initialize())
-app.use(passport.session())
 
 // Slowdown: For Rate limiting
 const speedLimiter = slowDown({
@@ -107,7 +107,7 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
     app.get('/signup', (req, res) => {
-        res.render('signup', { result: req.session.result })
+        res.render('signup', { notifs: res.cookie.notifs })
     })
 
     app.post('/signup', (req, res) => {
@@ -123,8 +123,7 @@ const webserver = () => {
         newAccount(email, password, (result) => {
             if (result === false) {
                 log.info('Duplicate account')
-                req.session.result = { 'errDuplicateEmail': true }
-                req.session.cookie.expires = 5000 // Only store this message for 5 seconds
+                res.cookie('notifs', "ERR_DUP_EMAIL", NotificationCookieOptions)
                 return res.redirect('/signup')
             }
 
@@ -140,55 +139,26 @@ const webserver = () => {
     app.post('/login', (req, res) => {
         const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
         const password = req.fields.password
-        const captcha = req.fields['g-recaptcha-response']
-        captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, (captchaResults) => {
-            // skip captcha validation for testing purposes
-            captchaResults = true
-            if (captchaResults === true) {
-                log.info('Recaptcha is valid')
-                loginAccount(email, password, (result) => {
-                    if (result === false) {
-                        log.info('Failed to login')
-                        req.session.result = { 'errCredentialsInvalid': true }
-                        req.session.cookie.expires = 5000 // Only store this message for 5 seconds
-                        return res.redirect('/login')
-                    }
-
-                    log.info('Login OK')
-                    res.cookie('sid', result, CookieOptions);
-                    return res.render('login', { 'result': { 'loginSuccess': true } })
-                })
-            } else {
-                log.info('Failed captcha check. Ignoring request.')
-                // return res.render('login', { "result": { "errCredentialsInvalid": true } })
+        
+        loginAccount(email, password, (result) => {
+            if (result === false) {
+                log.info('Failed to login')
+                res.cookie('notifs', "ERR_CREDS_INVALID", NotificationCookieOptions)
+                return res.redirect('/login')
             }
+
+            log.info('Login OK')
+            res.cookie('sid', result, SessionCookieOptions);
+            return res.render('login', { 'result': { 'loginSuccess': true } })
         })
     })
 
     app.get('/logout', (req, res) => {
         logoutAccount(req.cookies.sid, () => {
-            res.clearCookie('sid', CookieOptions)
+            res.clearCookie('sid', SessionCookieOptions)
         })
         return res.redirect('/')
     })
-
-    // Google OAuth2.0
-    // app.get('/google',
-    //     passport.authenticate('google', {scope: ['email', 'profile']}));
-
-    // app.get('/google/callback',
-    //     passport.authenticate('google', {failureRedirect: '/login'}),
-    //     (req, res) => {
-    //         res.redirect('/');
-    //     });
-
-    // app.get('/sms', (req, res) => {
-    //     res.render('sms');
-    // })
-
-    // app.get('/otp', (req, res) => {
-    //     res.render('otp');
-    // })
 
     app.listen(config.webserver.port, (err) => {
         if (err) throw log.error(err)
