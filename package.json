@@ -4,7 +4,8 @@
   "description": "No nonsense authentication system using MongoDB",
   "main": "module.js",
   "scripts": {
-    "test": "nodemon app"
+    "test": "nodemon app",
+    "eslint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "repository": {
     "type": "git",
