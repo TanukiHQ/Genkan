@@ -154,10 +154,10 @@ const webserver = () => {
         if (req.query.token !== undefined) {
             confirmEmail(req.query.token, (result) => {
                 if (result === false) {
-                    return res.render('confirmEmail', { notifs: "ERR_EMAIL_TOKEN_INVALID" })
+                    return res.render('confirmEmail', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
                 }
 
-                return res.render('confirmEmail', { notifs: "OK_EMAIL_CONFIRMED" })
+                return res.render('confirmEmail', { notifs: 'OK_EMAIL_CONFIRMED' })
             })
         }
 
