@@ -143,7 +143,7 @@ const webserver = () => {
     })
 
     app.get('/login', (req, res) => {
-        res.render('login', { result: req.cookies.notifs })
+        res.render('login', { notifs: req.cookies.notifs })
     })
 
     app.post('/login', (req, res) => {
