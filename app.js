@@ -50,8 +50,8 @@ app.use(cookieParser(config.genkan.secretKey))
 // cookieParser: Cookie schema for sessions
 const SessionCookieOptions = {
     httpOnly: true,
-    secure: false,
-    signed: false,
+    secure: true,
+    signed: true,
     domain: `.${config.webserver.domain}`,
     maxAge: 7890000,
     path: '/'
@@ -60,8 +60,8 @@ const SessionCookieOptions = {
 // cookieParser: Cookie schema for notifications
 const NotificationCookieOptions = {
     httpOnly: true,
-    secure: false,
-    signed: false,
+    secure: true,
+    signed: true,
     domain: `.${config.webserver.domain}`,
     maxAge: 5000,
     path: '/'
@@ -149,7 +149,7 @@ const webserver = () => {
             }
 
             log.info('Login OK')
-            res.cookie('sid', result, { httpOnly: true, secure: true, signed: true, domain:`.${config.webserver.domain}`  });
+            res.cookie('sid', result, SessionCookieOptions);
             return res.render('login', { 'result': { 'loginSuccess': true } })
         })
     })
