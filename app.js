@@ -36,6 +36,15 @@ app.engine('hbs', exphbs({
     defaultLayout: 'main',
     extname: '.hbs',
     layoutsDir: `node_modules/${theme}/views/layouts/`,
+    helpers: {
+        ifEquals = (a, b) => {
+            if (a === b) {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
 }))
 
 // Handlebars: Views folder
