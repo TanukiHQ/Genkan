@@ -11,8 +11,8 @@ require('../db')
 
 // UUID & Hashing
 const sha512 = require('hash-anything').sha512
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
@@ -26,15 +26,15 @@ const transporter = nodemailer.createTransport({
         user: config.smtp.username,
         pass: config.smtp.password,
     },
-});
+})
 
 // Handlebars
 const Handlebars = require('handlebars')
 
 // Email Template
 const fs = require('fs')
-const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmation.hbs`, 'utf8');
-const confirmEmailTemplate = Handlebars.compile(confirmEmailSource);
+const confirmEmailSource = fs.readFileSync(`node_modules/${theme}/mail/confirmation.hbs`, 'utf8')
+const confirmEmailTemplate = Handlebars.compile(confirmEmailSource)
 
 MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     const db = client.db(dbName)
@@ -89,7 +89,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             receiver: email,
             url: `https://id.hakkou.app/register?confirmation=${token}`,
         }
-        const message = confirmEmailTemplate(data);
+        const message = confirmEmailTemplate(data)
 
         // send email
         transporter.sendMail({
@@ -97,7 +97,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             to: email,
             subject: 'Confirm your HakkouID',
             html: message,
-        });
+        })
     }
 
     confirmEmail = (token, callback) => {

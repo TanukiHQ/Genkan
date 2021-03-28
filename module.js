@@ -24,8 +24,8 @@ isAuthenticated = (clientOptions, sid) => {
                 // Get time difference between last accessed date and current date
                 const timeNow = new Date()
                 const storedDate = new Date(result[0].timestamp)
-                const diffTime = Math.abs(timeNow - storedDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const diffTime = Math.abs(timeNow - storedDate)
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
 
                 // Check whether SID is older than 31

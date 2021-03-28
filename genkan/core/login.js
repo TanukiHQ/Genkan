@@ -9,7 +9,7 @@ require('../db')
 
 // Hashing
 const sha512 = require('hash-anything').sha512
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
@@ -74,8 +74,8 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             // Get time difference between last accessed date and current date
             const timeNow = new Date()
             const storedDate = new Date(result[0].timestamp)
-            const diffTime = Math.abs(timeNow - storedDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffTime = Math.abs(timeNow - storedDate)
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
             if (diffDays > 31) {
                 deleteDB(db, 'sessions', { 'sid': sid }, () => {

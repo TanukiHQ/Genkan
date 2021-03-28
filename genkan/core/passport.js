@@ -1,19 +1,19 @@
 // Module imports
 // require("/genkan/auth/login")
 // require("/genkan/auth/register")
-const config = require('./genkan/config');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth2').Strategy;
+const config = require('./genkan/config')
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth2').Strategy
 
 
 // Will study and modify code here later on
 passport.serializeUser((user, done) => {
-    done(null, user);
-});
+    done(null, user)
+})
 
 passport.deserializeUser((user, done) => {
-    done(null, user);
-});
+    done(null, user)
+})
 
 passport.use(new GoogleStrategy({
     clientID: config.genkan.GOOGLE_CLIENT_ID,
@@ -25,7 +25,7 @@ passport.use(new GoogleStrategy({
     // User.findOrCreate({ googleId: profile.id }, function (err, user) {
     //    return done(err, user);
     // });
-    console.log(profile);
+    console.log(profile)
     // const googleID = profile.id;
     // const displayName = profile.displayName;
     // const email = profile.email;
@@ -48,6 +48,6 @@ passport.use(new GoogleStrategy({
 
     // login and register of user will happen here
 
-    return done(null, profile);
+    return done(null, profile)
 }),
-));
+))

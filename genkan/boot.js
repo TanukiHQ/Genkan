@@ -1,6 +1,6 @@
 // Misc
 const chalk = require('chalk')
-const package = require(`../package.json`);
+const package = require(`../package.json`)
 
 module.exports = {
     boot: () => {

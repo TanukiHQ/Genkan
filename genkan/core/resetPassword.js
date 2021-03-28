@@ -9,7 +9,7 @@ require('../db')
 
 // Hashing
 const sha512 = require('hash-anything').sha512
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 
 MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     const db = client.db(dbName)

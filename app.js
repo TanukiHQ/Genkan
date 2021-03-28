@@ -23,9 +23,9 @@ const app = express()
 const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
-const formidable = require('express-formidable');
-const slowDown = require('express-slow-down');
-const passport = require('passport');
+const formidable = require('express-formidable')
+const slowDown = require('express-slow-down')
+const passport = require('passport')
 
 // Express Additional Options
 // Express: Public Directory
@@ -62,19 +62,19 @@ const CookieOptions = {
 app.use(session({ secret: config.genkan.secretKey, resave: false, saveUninitialized: false }));
 
 // Formidable: For POST data accessing
-app.use(formidable());
+app.use(formidable())
 
 // Initializes passport and passport sessions
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Slowdown: For Rate limiting
 const speedLimiter = slowDown({
     windowMs: 15 * 60 * 1000, // 15 minutes
     delayAfter: 100, // allow 100 requests per 15 minutes, then...
     delayMs: 500, // begin adding 500ms of delay per request above 100:
-});
-app.use(speedLimiter);
+})
+app.use(speedLimiter)
 
 // Logging
 const log = require('loglevel')
@@ -140,10 +140,10 @@ const webserver = () => {
     app.post('/login', (req, res) => {
         const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
         const password = req.fields.password
-        const captcha = req.fields['g-recaptcha-response'];
+        const captcha = req.fields['g-recaptcha-response']
         captchaValidation(captcha, config.genkan.googleRecaptchaSecretKey, (captchaResults) => {
             // skip captcha validation for testing purposes
-            captchaResults = true;
+            captchaResults = true
             if (captchaResults === true) {
                 log.info('Recaptcha is valid')
                 loginAccount(email, password, (result) => {
@@ -167,9 +167,9 @@ const webserver = () => {
 
     app.get('/logout', (req, res) => {
         logoutAccount(req.cookies.sid, () => {
-            res.clearCookie('sid', CookieOptions);
+            res.clearCookie('sid', CookieOptions)
         })
-        return res.redirect('/');
+        return res.redirect('/')
     })
 
     // Google OAuth2.0
