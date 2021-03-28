@@ -37,7 +37,7 @@ app.engine('hbs', exphbs({
     extname: '.hbs',
     layoutsDir: `node_modules/${theme}/views/layouts/`,
     helpers: {
-        ifEquals = (a, b) => {
+        ifEquals(a, b) {
             if (a === b) {
                 return true
             } else {
