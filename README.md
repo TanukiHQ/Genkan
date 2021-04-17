@@ -45,7 +45,8 @@ node app.js
 nodemon
 ```
 
-Running Genkan for the first time will generate a `config.json` file if it doesn't detect any existing `config.json` file.
+Running Genkan for the first time will generate a `config.json` file.
+
 Run Genkan again with the following command above and open `http://localhost:5000/login` in your browser.
 
 ## License
