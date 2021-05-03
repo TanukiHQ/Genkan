@@ -154,10 +154,10 @@ const webserver = () => {
         if (req.query.token !== undefined) {
             confirmEmail(req.query.token, (result) => {
                 if (result === false) {
-                    return res.render('confirmEmail', { notifs: "ERR_EMAIL_TOKEN_INVALID" })
+                    return res.render('confirmEmail', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
                 }
 
-                return res.render('confirmEmail', { notifs: "OK_EMAIL_CONFIRMED" })
+                return res.render('confirmEmail', { notifs: 'OK_EMAIL_CONFIRMED' })
             })
         }
 
@@ -182,7 +182,7 @@ const webserver = () => {
 
             log.info('Login OK')
             res.cookie('sid', result, SessionCookieOptions)
-            return res.render('login', { 'result': { 'loginSuccess': true } })
+            return res.redirect(config.genkan.redirect.afterLogin)
         })
     })
 
@@ -190,7 +190,7 @@ const webserver = () => {
         logoutAccount(req.cookies.sid, () => {
             res.clearCookie('sid', SessionCookieOptions)
         })
-        return res.redirect('/')
+        return res.redirect(config.genkan.redirect.afterLogout)
     })
 
     app.listen(config.webserver.port, (err) => {
