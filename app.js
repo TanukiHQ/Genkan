@@ -12,8 +12,8 @@ const root = require('app-root-path')
 // Module imports
 require(root + '/genkan/core/login')
 require(root + '/genkan/core/register')
+require(root + '/genkan/core/resetPassword')
 require(root + '/genkan/db')
-require(root + '/genkan/core/recaptchaValidation')
 require(root + '/genkan/core/logout')
 
 // Express related modules
