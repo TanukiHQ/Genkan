@@ -53,7 +53,6 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             }
 
             updateDB(db, 'users', { 'email': email }, SetTokenPayload, () => {
-
                 // Compile from email template
                 const data = {
                     receiver: email,
