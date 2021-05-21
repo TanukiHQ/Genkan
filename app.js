@@ -144,7 +144,7 @@ const webserver = () => {
         })
     })
 
-    app.get('/confirm-email-address', (req, res) => {
+    app.get('/confirm', (req, res) => {
         // If user isn't supposed to be on this page (possible directory traversal)
         if (req.signedCookies.preData === undefined) {
             return res.redirect('/login')
