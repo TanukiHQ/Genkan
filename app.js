@@ -140,7 +140,10 @@ const webserver = () => {
             log.info('Account creation OK')
 
             res.cookie('preData', email, NotificationCookieOptions)
-            return res.redirect('/confirm-email-address')
+            return res.redirect('/confirm')
+        })
+    })
+
         })
     })
 
