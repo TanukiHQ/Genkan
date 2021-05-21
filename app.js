@@ -144,6 +144,17 @@ const webserver = () => {
         })
     })
 
+    app.get('/recover', (req, res) => {
+        res.render('recoverAccount', { notifs: req.signedCookies.notifs })
+    })
+
+    app.post('/recover', (req, res) => {
+        const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+
+        sendResetPasswordEmail(email, () => {
+            res.cookie('notifs', 'OK_EMAIL_SENT', NotificationCookieOptions)
+            log.info('Recovery email sent.')
+            return res.redirect('/recover')
         })
     })
 
