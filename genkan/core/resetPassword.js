@@ -48,7 +48,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
 
             const SetTokenPayload = {
                 $set: {
-                    'token.resetPassword': token,
+                    'tokens.resetPassword': token,
                 },
             }
 
@@ -74,7 +74,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     }
 
     resetPassword = (resetPasswordToken, newPassword, callback) => {
-        findDB(db, 'users', { 'token.resetPassword': resetPasswordToken }, (result) => {
+        findDB(db, 'users', { 'tokens.resetPassword': resetPasswordToken }, (result) => {
             if (result.length !== 1) {
                 return callback(false)
             }
@@ -97,7 +97,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 },
             }
 
-            insertDB(db, 'users', { 'resetPassword': resetPasswordToken }, SetPasswordPayload, () => {
+            updateDB(db, 'users', { 'tokens.resetPassword': resetPasswordToken }, SetPasswordPayload, () => {
                 callback(true)
             })
         })
