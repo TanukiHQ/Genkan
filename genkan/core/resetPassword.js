@@ -12,6 +12,7 @@ require('../db')
 // Hashing
 const sha512 = require('hash-anything').sha512
 const bcrypt = require('bcrypt')
+const saltRounds = 16
 
 // Token generator
 const tokenGenerator = require('./tokenGenerator')
