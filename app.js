@@ -204,7 +204,7 @@ const webserver = () => {
         })
     })
 
-    app.get('/logout', (req, res) => {
+    app.post('/logout', (req, res) => {
         logoutAccount(req.cookies.sid, () => {
             res.clearCookie('sid', SessionCookieOptions)
         })
