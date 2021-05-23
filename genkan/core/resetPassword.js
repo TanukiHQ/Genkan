@@ -92,6 +92,9 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 $set: {
                     'password': hashedPasswordSHA512Bcrypt,
                 },
+                $unset: {
+                    'tokens.resetPassword': 1,
+                },
             }
 
             insertDB(db, 'users', { 'resetPassword': resetPasswordToken }, SetPasswordPayload, () => {
