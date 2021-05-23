@@ -212,7 +212,7 @@ const webserver = () => {
     })
 
     app.get('/login', (req, res) => {
-        res.render('login', { notifs: req.signedCookies.notifs })
+        res.render('login', { notifs: req.signedCookies.notifs, csrfToken: req.csrfToken() })
     })
 
     app.post('/login', (req, res) => {
