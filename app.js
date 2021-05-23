@@ -126,7 +126,7 @@ const webserver = () => {
     })
 
     app.get('/signup', (req, res) => {
-        res.render('signup', { notifs: req.signedCookies.notifs })
+        res.render('signup', { notifs: req.signedCookies.notifs, csrfToken: req.csrfToken() })
     })
 
     app.post('/signup', (req, res) => {
@@ -153,7 +153,7 @@ const webserver = () => {
     })
 
     app.get('/recover', (req, res) => {
-        res.render('recoverAccount', { notifs: req.signedCookies.notifs })
+        res.render('recoverAccount', { notifs: req.signedCookies.notifs, csrfToken: req.csrfToken() })
     })
 
     app.post('/recover', (req, res) => {
@@ -171,7 +171,7 @@ const webserver = () => {
             return res.redirect('/recover')
         }
 
-        return res.render('changePassword')
+        return res.render('changePassword', { csrfToken: req.csrfToken() })
     })
 
     app.post('/change-password', (req, res) => {
@@ -203,7 +203,7 @@ const webserver = () => {
                     return res.render('confirmEmail', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
                 }
 
-                return res.render('confirmEmail', { notifs: 'OK_EMAIL_CONFIRMED' })
+                return res.render('confirmEmail', { notifs: 'OK_EMAIL_CONFIRMED', csrfToken: req.csrfToken() })
             })
         }
 
