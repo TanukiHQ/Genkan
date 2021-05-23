@@ -171,7 +171,7 @@ const webserver = () => {
             return res.redirect('/recover')
         }
 
-        return res.render('changePassword', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
+        return res.render('changePassword')
     })
 
     app.post('/change-password', (req, res) => {
