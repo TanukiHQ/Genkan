@@ -12,7 +12,7 @@ require('../db')
 // UUID & Hashing
 const sha512 = require('hash-anything').sha512
 const bcrypt = require('bcrypt')
-const saltRounds = 10
+const saltRounds = 16
 
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
