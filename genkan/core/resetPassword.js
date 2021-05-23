@@ -82,7 +82,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             // SHA512 Hashing
             const hashedPasswordSHA512 = sha512({
                 a: newPassword,
-                b: email,
+                b: result[0].email,
             })
 
             // Bcrypt Hashing
