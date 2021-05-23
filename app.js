@@ -21,6 +21,7 @@ const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
+const csrf = require('csurf')
 const formidable = require('express-formidable')
 const slowDown = require('express-slow-down')
 
@@ -55,6 +56,9 @@ app.set('views', [
 
 // cookieParser: Secret key for signing
 app.use(cookieParser(config.genkan.secretKey))
+
+// CSRF protection
+app.use(csrf({ cookie: true }))
 
 // cookieParser: Cookie schema for sessions
 const SessionCookieOptions = {
