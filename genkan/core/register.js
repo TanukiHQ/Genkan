@@ -12,7 +12,7 @@ require('../db')
 // UUID & Hashing
 const sha512 = require('hash-anything').sha512
 const bcrypt = require('bcrypt')
-const saltRounds = 10
+const saltRounds = 16
 
 // Token Generator
 const tokenGenerator = require('./tokenGenerator')
@@ -84,7 +84,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     }
 
     sendConfirmationEmail = (email, token) => {
-    // Compile from email template
+        // Compile from email template
         const data = {
             receiver: email,
             url: `https://id.hakkou.app/register?confirmation=${token}`,

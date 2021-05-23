@@ -12,8 +12,8 @@ const root = require('app-root-path')
 // Module imports
 require(root + '/genkan/core/login')
 require(root + '/genkan/core/register')
+require(root + '/genkan/core/resetPassword')
 require(root + '/genkan/db')
-require(root + '/genkan/core/recaptchaValidation')
 require(root + '/genkan/core/logout')
 
 // Express related modules
@@ -117,6 +117,10 @@ if (config.debugMode === true) {
 
 // Express: Routes
 const webserver = () => {
+    app.get('/', (req, res) => {
+        res.redirect('./login')
+    })
+
     app.get('/signup', (req, res) => {
         res.render('signup', { notifs: req.signedCookies.notifs })
     })
@@ -140,11 +144,49 @@ const webserver = () => {
             log.info('Account creation OK')
 
             res.cookie('preData', email, NotificationCookieOptions)
-            return res.redirect('/confirm-email-address')
+            return res.redirect('/confirm')
         })
     })
 
-    app.get('/confirm-email-address', (req, res) => {
+    app.get('/recover', (req, res) => {
+        res.render('recoverAccount', { notifs: req.signedCookies.notifs })
+    })
+
+    app.post('/recover', (req, res) => {
+        const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+
+        sendResetPasswordEmail(email, () => {
+            res.cookie('notifs', 'OK_EMAIL_SENT', NotificationCookieOptions)
+            log.info('Recovery email sent.')
+            return res.redirect('/recover')
+        })
+    })
+
+    app.get('/change-password', (req, res) => {
+        if (req.query.token === undefined) {
+            return res.redirect('/recover')
+        }
+
+        return res.render('changePassword', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
+    })
+
+    app.post('/change-password', (req, res) => {
+        if (req.query.token === undefined) {
+            return false
+        }
+
+        resetPassword(req.query.token, req.fields.password, (result) => {
+            if (result === false) {
+                res.cookie('notifs', 'ERR_TOKEN_INVALID', NotificationCookieOptions)
+                return res.redirect('/login')
+            }
+
+            res.cookie('notifs', 'OK_PWD_RESET', NotificationCookieOptions)
+            return res.redirect('/login')
+        })
+    })
+
+    app.get('/confirm', (req, res) => {
         // If user isn't supposed to be on this page (possible directory traversal)
         if (req.signedCookies.preData === undefined) {
             return res.redirect('/login')
@@ -186,7 +228,7 @@ const webserver = () => {
         })
     })
 
-    app.get('/logout', (req, res) => {
+    app.post('/logout', (req, res) => {
         logoutAccount(req.cookies.sid, () => {
             res.clearCookie('sid', SessionCookieOptions)
         })
