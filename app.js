@@ -117,6 +117,10 @@ if (config.debugMode === true) {
 
 // Express: Routes
 const webserver = () => {
+    app.get('/', (req, res) => {
+        res.redirect('./login')
+    })
+
     app.get('/signup', (req, res) => {
         res.render('signup', { notifs: req.signedCookies.notifs })
     })
