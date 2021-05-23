@@ -20,7 +20,6 @@ require(root + '/genkan/core/logout')
 const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
-const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const csrf = require('csurf')
 const formidable = require('express-formidable')
@@ -59,7 +58,7 @@ app.set('views', [
 app.use(cookieParser(config.genkan.secretKey))
 
 // CSRF protection
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }))
 app.use(csrf({ cookie: true }))
 
 // cookieParser: Cookie schema for sessions
