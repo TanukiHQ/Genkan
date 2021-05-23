@@ -162,6 +162,30 @@ const webserver = () => {
         })
     })
 
+    app.get('/change-password', (req, res) => {
+        if (req.query.token === undefined) {
+            return res.redirect('/recover')
+        }
+
+        return res.render('changePassword', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
+    })
+
+    app.post('/change-password', (req, res) => {
+        if (req.query.token === undefined) {
+            return false
+        }
+
+        resetPassword(req.query.token, req.fields.password, (result) => {
+            if (result === false) {
+                res.cookie('notifs', 'ERR_TOKEN_INVALID', NotificationCookieOptions)
+                return res.redirect('/login')
+            }
+
+            res.cookie('notifs', 'OK_PWD_RESET', NotificationCookieOptions)
+            return res.redirect('/login')
+        })
+    })
+
     app.get('/confirm', (req, res) => {
         // If user isn't supposed to be on this page (possible directory traversal)
         if (req.signedCookies.preData === undefined) {
