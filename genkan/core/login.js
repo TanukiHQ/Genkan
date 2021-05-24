@@ -26,7 +26,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
         })
 
         // Find account to get stored hashed
-        findDB(db, 'users', { 'email': email }, (result) => {
+        findDB(db, config.mongo.collection, { 'email': email }, (result) => {
             // If no account found
             if (result.length !== 1) {
                 return callback(false)
@@ -54,7 +54,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
 
                 // Update database
                 insertDB(db, 'sessions', SessionSchema, () => {
-                    updateDB(db, 'users', { 'email': email }, UpdateLastSeenPayload, () => {
+                    updateDB(db, config.mongo.collection, { 'email': email }, UpdateLastSeenPayload, () => {
                         return callback(sid)
                     })
                 })

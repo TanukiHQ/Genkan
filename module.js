@@ -62,7 +62,7 @@ getUserFromUID = (clientOptions, uid) => {
 
         return new Promise((resolve, reject) => {
             // Find user with ID
-            findDB(db, 'users', { '_id': ObjectId(uid) }, (result) => {
+            findDB(db, config.mongo.collection, { '_id': ObjectId(uid) }, (result) => {
                 // Close client after lookup
                 client.close()
 
@@ -134,7 +134,7 @@ doLogout = (clientOptions, sid) => {
 
                 // Update database
                 deleteDB(db, 'sessions', { 'sid': sid }, () => {
-                    updateDB(db, 'users', { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
+                    updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
                         client.close()
                         return resolve({ status: 'OK', result: sid })
                     })

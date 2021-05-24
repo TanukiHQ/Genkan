@@ -40,7 +40,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     const db = client.db(dbName)
 
     sendResetPasswordEmail = (email, callback) => {
-        findDB(db, 'users', { 'email': email }, (result) => {
+        findDB(db, config.mongo.collection, { 'email': email }, (result) => {
             if (result.length !== 1) {
                 return callback(false)
             }
@@ -53,7 +53,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 },
             }
 
-            updateDB(db, 'users', { 'email': email }, SetTokenPayload, () => {
+            updateDB(db, config.mongo.collection, { 'email': email }, SetTokenPayload, () => {
                 // Compile from email template
                 const data = {
                     receiver: email,
@@ -75,7 +75,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     }
 
     resetPassword = (resetPasswordToken, newPassword, callback) => {
-        findDB(db, 'users', { 'tokens.resetPassword': resetPasswordToken }, (result) => {
+        findDB(db, config.mongo.collection, { 'tokens.resetPassword': resetPasswordToken }, (result) => {
             if (result.length !== 1) {
                 return callback(false)
             }
@@ -98,7 +98,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 },
             }
 
-            updateDB(db, 'users', { 'tokens.resetPassword': resetPasswordToken }, SetPasswordPayload, () => {
+            updateDB(db, config.mongo.collection, { 'tokens.resetPassword': resetPasswordToken }, SetPasswordPayload, () => {
                 callback(true)
             })
         })

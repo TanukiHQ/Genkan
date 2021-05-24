@@ -40,7 +40,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     const db = client.db(dbName)
     newAccount = (email, password, callback) => {
     // Check for duplicate accounts
-        findDB(db, 'users', { 'email': email }, (result) => {
+        findDB(db, config.mongo.collection, { 'email': email }, (result) => {
             // Reject if duplicate
             if (result.length !== 0) {
                 return callback(false)
@@ -76,7 +76,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             }
 
             // Insert new user into database
-            insertDB(db, 'users', NewUserSchema, () => {
+            insertDB(db, config.mongo.collection, NewUserSchema, () => {
                 callback(true)
                 sendConfirmationEmail(email, emailConfirmationToken)
             })
@@ -101,7 +101,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     }
 
     confirmEmail = (token, callback) => {
-        findDB(db, 'users', { 'tokens.emailConfirmation': token }, (result) => {
+        findDB(db, config.mongo.collection, { 'tokens.emailConfirmation': token }, (result) => {
             if (result.length !== 1) {
                 return callback(false)
             }
@@ -114,7 +114,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 },
             }
 
-            updateDB(db, 'users', { 'tokens.emailConfirmation': token }, AccountActivatePayload, () => {
+            updateDB(db, config.mongo.collection, { 'tokens.emailConfirmation': token }, AccountActivatePayload, () => {
                 callback(true)
             })
         })
