@@ -22,7 +22,7 @@ const app = express()
 const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
 const csrf = require('csurf')
-const formidable = require('express-formidable')
+// const formidable = require('express-formidable')
 const slowDown = require('express-slow-down')
 
 // Express Additional Options
@@ -57,8 +57,13 @@ app.set('views', [
 // cookieParser: Secret key for signing
 app.use(cookieParser(config.genkan.secretKey))
 
-// CSRF protection
-app.use(express.urlencoded({ extended: false }))
+// BodyParser
+app.use(express.urlencoded({ extended: true }))
+
+// Formidable: For POST data accessing
+// app.use(formidable())
+
+// Csurf: CSRF protection
 app.use(csrf({ cookie: true }))
 
 // cookieParser: Cookie schema for sessions
@@ -80,9 +85,6 @@ const NotificationCookieOptions = {
     maxAge: 5000,
     path: '/',
 }
-
-// Formidable: For POST data accessing
-app.use(formidable())
 
 // Slowdown: For Rate limiting
 const speedLimiter = slowDown({
@@ -131,8 +133,8 @@ const webserver = () => {
     })
 
     app.post('/signup', (req, res) => {
-        const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
-        const password = req.fields.password
+        const email = req.body.email.toLowerCase().replace(/\s+/g, '')
+        const password = req.body.password
 
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
@@ -158,7 +160,7 @@ const webserver = () => {
     })
 
     app.post('/recover', (req, res) => {
-        const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
+        const email = req.body.email.toLowerCase().replace(/\s+/g, '')
 
         sendResetPasswordEmail(email, () => {
             res.cookie('notifs', 'OK_EMAIL_SENT', NotificationCookieOptions)
@@ -180,7 +182,7 @@ const webserver = () => {
             return false
         }
 
-        resetPassword(req.query.token, req.fields.password, (result) => {
+        resetPassword(req.query.token, req.body.password, (result) => {
             if (result === false) {
                 res.cookie('notifs', 'ERR_TOKEN_INVALID', NotificationCookieOptions)
                 return res.redirect('/login')
@@ -217,8 +219,8 @@ const webserver = () => {
     })
 
     app.post('/login', (req, res) => {
-        const email = req.fields.email.toLowerCase().replace(/\s+/g, '')
-        const password = req.fields.password
+        const email = req.body.email.toLowerCase().replace(/\s+/g, '')
+        const password = req.body.password
 
         loginAccount(email, password, (result) => {
             if (result === false) {
