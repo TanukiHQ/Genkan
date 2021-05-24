@@ -39,7 +39,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 // Schema for sessions in session collection
                 const SessionSchema = {
                     'uid': result[0]._id,
-                    'sid': tokenGenerator(),
+                    'sid': sid,
                     // Why is this in ISOString you ask? Because some stinky reason, MongoDB returns a completely empty object when attempting to .find().
                     'timestamp': (new Date()).toISOString(),
                     'createdTimestamp': new Date(),
