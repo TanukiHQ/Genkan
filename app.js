@@ -55,7 +55,7 @@ app.set('views', [
 ])
 
 // cookieParser: Secret key for signing
-app.use(cookieParser())
+app.use(cookieParser(config.genkan.secretKey))
 
 // BodyParser
 app.use(express.urlencoded({ extended: true }))
