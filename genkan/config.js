@@ -35,6 +35,7 @@ const generateNewConfig = () => {
         'webserver': {
             'genkanDomain': 'localhost:5000',
             'cookieDomain': 'localhost:5000',
+            'cookieHTTPOnly': true,
             'port': 5000,
         },
         'mongo': {

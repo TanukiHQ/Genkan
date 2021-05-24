@@ -68,7 +68,7 @@ app.use(csrf({ cookie: true }))
 
 // cookieParser: Cookie schema for sessions
 const SessionCookieOptions = {
-    httpOnly: true,
+    httpOnly: config.webserver.cookieHTTPOnly,
     secure: true,
     signed: true,
     domain: `.${config.webserver.cookieDomain}`,
