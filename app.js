@@ -55,7 +55,7 @@ app.set('views', [
 ])
 
 // cookieParser: Secret key for signing
-app.use(cookieParser(config.genkan.secretKey))
+app.use(cookieParser())
 
 // BodyParser
 app.use(express.urlencoded({ extended: true }))
@@ -70,7 +70,7 @@ app.use(csrf({ cookie: true }))
 const SessionCookieOptions = {
     httpOnly: true,
     secure: true,
-    signed: true,
+    signed: false,
     domain: `.${config.webserver.cookieDomain}`,
     maxAge: 7890000,
     path: '/',
@@ -80,7 +80,7 @@ const SessionCookieOptions = {
 const NotificationCookieOptions = {
     httpOnly: true,
     secure: true,
-    signed: true,
+    signed: false,
     domain: `.${config.webserver.cookieDomain}`,
     maxAge: 5000,
     path: '/',
