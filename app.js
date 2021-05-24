@@ -70,7 +70,7 @@ app.use(csrf({ cookie: true }))
 const SessionCookieOptions = {
     httpOnly: true,
     secure: true,
-    signed: false,
+    signed: true,
     domain: `.${config.webserver.cookieDomain}`,
     maxAge: 7890000,
     path: '/',
@@ -80,7 +80,7 @@ const SessionCookieOptions = {
 const NotificationCookieOptions = {
     httpOnly: true,
     secure: true,
-    signed: false,
+    signed: true,
     domain: `.${config.webserver.cookieDomain}`,
     maxAge: 5000,
     path: '/',
