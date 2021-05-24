@@ -71,7 +71,7 @@ const SessionCookieOptions = {
     httpOnly: true,
     secure: true,
     signed: true,
-    domain: `.${config.webserver.domain}`,
+    domain: `.${config.webserver.cookieDomain}`,
     maxAge: 7890000,
     path: '/',
 }
@@ -81,7 +81,7 @@ const NotificationCookieOptions = {
     httpOnly: true,
     secure: true,
     signed: true,
-    domain: `.${config.webserver.domain}`,
+    domain: `.${config.webserver.cookieDomain}`,
     maxAge: 5000,
     path: '/',
 }
@@ -169,7 +169,7 @@ const webserver = () => {
         })
     })
 
-    app.get('/change-password', (req, res) => {
+    app.get('/reset', (req, res) => {
         if (req.query.token === undefined) {
             return res.redirect('/recover')
         }
@@ -177,7 +177,7 @@ const webserver = () => {
         return res.render('changePassword', { csrfToken: req.csrfToken() })
     })
 
-    app.post('/change-password', (req, res) => {
+    app.post('/reset', (req, res) => {
         if (req.query.token === undefined) {
             return false
         }

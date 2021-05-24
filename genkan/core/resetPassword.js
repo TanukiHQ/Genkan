@@ -57,7 +57,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 // Compile from email template
                 const data = {
                     receiver: email,
-                    url: `https://id.hakkou.app/confirm?token=${token}`,
+                    url: `https://${config.webserver.genkanDomain}/reset?token=${token}`,
                 }
                 const message = pwdResetEmailTemplate(data)
 
@@ -65,7 +65,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 transporter.sendMail({
                     from: config.smtp.mailFromAddress,
                     to: email,
-                    subject: 'Password reset | HakkouID account',
+                    subject: config.smtp.customisation.resetPassword.subject,
                     html: message,
                 })
 

@@ -33,7 +33,8 @@ prefix.apply(log.getLogger('critical'), {
 const generateNewConfig = () => {
     const ConfigSchema = {
         'webserver': {
-            'domain': 'localhost:5000',
+            'genkanDomain': 'localhost:5000',
+            'cookieDomain': 'localhost:5000',
             'port': 5000,
         },
         'mongo': {
@@ -47,12 +48,6 @@ const generateNewConfig = () => {
                 'afterLogin': 'http://localhost:5000/success',
                 'afterSignout': 'https://localhost:5000/loggedout',
             },
-            'googleRecaptchaSecretKey': '',
-            'GOOGLE_CLIENT_ID': '',
-            'GOOGLE_CLIENT_SECRET': '',
-            'allowGoogleOAuth': '',
-            'allowFacebookOAuth': '',
-            'allowTwitterOAuth': '',
             'secretKey': tokenGenerator(),
         },
         'smtp': {
@@ -61,6 +56,14 @@ const generateNewConfig = () => {
             'username': 'apikey',
             'password': 'password',
             'mailFromAddress': 'accounts@example.com',
+            'customisation': {
+                'confirmation': {
+                    'subject': 'Confirm your email address | Genkan',
+                },
+                'resetPassword': {
+                    'subject': 'Password reset | Genkan',
+                },
+            },
         },
         'debugMode': true,
     }

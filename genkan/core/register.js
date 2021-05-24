@@ -87,7 +87,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
         // Compile from email template
         const data = {
             receiver: email,
-            url: `https://id.hakkou.app/register?confirmation=${token}`,
+            url: `https://${config.webserver.genkanDomain}/confirm?confirmation=${token}`,
         }
         const message = confirmEmailTemplate(data)
 
@@ -95,7 +95,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
         transporter.sendMail({
             from: config.smtp.mailFromAddress,
             to: email,
-            subject: 'Confirm your HakkouID',
+            subject: config.smtp.customisation.confirmation.subject,
             html: message,
         })
     }
