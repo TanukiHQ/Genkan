@@ -265,6 +265,16 @@ const webserver = () => {
         })
     })
 
+    app.get('/logout', (req, res) => {
+        isLoggedin(req.signedCookies.sid, (result) => {
+            if (result === false) {
+                res.cookie('notifs', 'ERR_ALREADY_LOGGEDOUT', NotificationCookieOptions)
+                return res.redirect('/login')
+            }
+            res.render('logout', { csrfToken: req.csrfToken() })
+        })
+    })
+
     app.post('/logout', (req, res) => {
         logoutAccount(req.signedCookies.sid, () => {
             res.clearCookie('sid', SessionCookieOptions)

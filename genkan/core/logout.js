@@ -12,7 +12,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     if (err) throw err
 
     const db = client.db(dbName)
-    logoutAccount = (sid, callback) => {
+    logoutAccount = (sid, isAll, callback) => {
         // Find account to get stored hashed
         findDB(db, 'sessions', { 'sid': sid }, (result) => {
             // If such session is found
@@ -27,11 +27,21 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 },
             }
 
-            // Update database
-            deleteDB(db, 'sessions', { 'sid': sid }, () => {
+            const updateDBWithLastSeen = () => {
                 updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
                     return callback(sid)
                 })
+            }
+
+            if (isAll === false) {
+                deleteDB(db, 'sessions', { 'uid': result[0].uid }, () => {
+                    updateDBWithLastSeen()
+                })
+            }
+
+            // Update database
+            deleteDB(db, 'sessions', { 'sid': sid }, () => {
+                updateDBWithLastSeen()
             })
         })
     }
