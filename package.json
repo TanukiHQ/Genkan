@@ -4,7 +4,10 @@
   "description": "No nonsense authentication system using MongoDB",
   "main": "module.js",
   "scripts": {
-    "test": "nodemon app",
+    "start": "node app",
+    "install": "npm install",
+    "postinstall": "node app",
+    "watch": "nodemon app",
     "eslint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "repository": {
