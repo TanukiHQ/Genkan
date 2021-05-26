@@ -27,21 +27,19 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
                 },
             }
 
-            const updateDBWithLastSeen = () => {
-                updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
-                    return
-                })
-            }
-
             if (isAll === false) {
                 deleteDB(db, 'sessions', { 'uid': result[0].uid }, () => {
-                    return updateDBWithLastSeen()
+                    updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
+                        return
+                    })
                 })
             }
 
             // Update database
             deleteManyDB(db, 'sessions', { 'sid': sid }, () => {
-                return updateDBWithLastSeen()
+                updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
+                    return
+                })
             })
         })
     }
