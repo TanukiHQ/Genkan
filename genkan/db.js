@@ -34,7 +34,7 @@ deleteDB = function(db, coll, query, callback) {
     // Get the documents collection
     const collection = db.collection(coll)
     // Find some documents
-    collection.remove(query).toArray((err) => {
+    collection.deleteMany(query).toArray((err) => {
         if (err) throw err
         callback(true)
     })
