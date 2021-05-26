@@ -28,7 +28,9 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             }
 
             const updateDBWithLastSeen = () => {
-                updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload)
+                updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
+                    return
+                })
             }
 
             if (isAll === false) {
