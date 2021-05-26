@@ -276,10 +276,17 @@ const webserver = () => {
     })
 
     app.post('/logout', (req, res) => {
-        logoutAccount(req.signedCookies.sid, () => {
+        // By default, do not sign out of all devices
+        signoutType = false
+
+        if (req.body.logoutOf == 'ALL') {
+            signoutType = true
+        }
+
+        logoutAccount(req.signedCookies.sid, signoutType, () => {
             res.clearCookie('sid', SessionCookieOptions)
+            return res.redirect(config.genkan.redirect.afterSignout)
         })
-        return res.redirect(config.genkan.redirect.afterSignout)
     })
 
     app.listen(config.webserver.port, (err) => {
