@@ -30,7 +30,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             if (isAll === false) {
                 deleteDB(db, 'sessions', { 'uid': result[0].uid }, () => {
                     updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
-                        return
+                        return callback()
                     })
                 })
             }
@@ -38,7 +38,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             // Update database
             deleteManyDB(db, 'sessions', { 'sid': sid }, () => {
                 updateDB(db, config.mongo.collection, { '_uid': ObjectId(result[0].uid) }, UpdateLastSeenPayload, () => {
-                    return
+                    return callback()
                 })
             })
         })
