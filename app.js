@@ -279,7 +279,7 @@ const webserver = () => {
         logoutAccount(req.signedCookies.sid, () => {
             res.clearCookie('sid', SessionCookieOptions)
         })
-        return res.redirect(config.genkan.redirect.afterLogout)
+        return res.redirect(config.genkan.redirect.afterSignout)
     })
 
     app.listen(config.webserver.port, (err) => {
