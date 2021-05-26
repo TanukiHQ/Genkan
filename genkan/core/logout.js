@@ -40,7 +40,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
             }
 
             // Update database
-            deleteDB(db, 'sessions', { 'sid': sid }, () => {
+            deleteManyDB(db, 'sessions', { 'sid': sid }, () => {
                 updateDBWithLastSeen()
             })
         })
