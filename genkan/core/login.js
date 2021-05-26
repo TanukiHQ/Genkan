@@ -66,6 +66,10 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     }
 
     isLoggedin = (sid, callback) => {
+        if (sid === undefined) {
+            return callback(false)
+        }
+
         findDB(db, 'sessions', { 'sid': sid }, (result) => {
             if (result.length !== 1) {
                 callback(false)

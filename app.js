@@ -125,33 +125,48 @@ if (config.debugMode === true) {
 // Express: Routes
 const webserver = () => {
     app.get('/', (req, res) => {
-        res.redirect('./login')
+        isLoggedin(req.signedCookies.sid, (result) => {
+            if (result === true) {
+                return res.redirect(config.genkan.redirect.afterLogin)
+            }
+            res.redirect('./login')
+        })
     })
 
     app.get('/signup', (req, res) => {
-        res.render('signup', { notifs: req.signedCookies.notifs, csrfToken: req.csrfToken() })
+        isLoggedin(req.signedCookies.sid, (result) => {
+            if (result === true) {
+                return res.redirect(config.genkan.redirect.afterLogin)
+            }
+            res.render('signup', { notifs: req.signedCookies.notifs, csrfToken: req.csrfToken() })
+        })
     })
 
     app.post('/signup', (req, res) => {
-        const email = req.body.email.toLowerCase().replace(/\s+/g, '')
-        const password = req.body.password
-
-        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-        // Data validations
-        if (emailRegex.test(email) === false || password.length < 8) return
-
-        newAccount(email, password, (result) => {
-            if (result === false) {
-                log.info('Duplicate account')
-                res.cookie('notifs', 'ERR_DUP_EMAIL', NotificationCookieOptions)
-                return res.redirect('/signup')
+        isLoggedin(req.signedCookies.sid, (result) => {
+            if (result === true) {
+                return res.redirect(config.genkan.redirect.afterLogin)
             }
+            const email = req.body.email.toLowerCase().replace(/\s+/g, '')
+            const password = req.body.password
 
-            log.info('Account creation OK')
+            const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-            res.cookie('preData', email, NotificationCookieOptions)
-            return res.redirect('/confirm')
+            // Data validations
+            if (emailRegex.test(email) === false || password.length < 8) return
+
+            newAccount(email, password, (result) => {
+                if (result === false) {
+                    log.info('Duplicate account')
+                    res.cookie('notifs', 'ERR_DUP_EMAIL', NotificationCookieOptions)
+                    return res.redirect('/signup')
+                }
+
+                log.info('Account creation OK')
+
+                res.cookie('preData', email, NotificationCookieOptions)
+                return res.redirect('/confirm')
+            })
         })
     })
 
@@ -194,49 +209,64 @@ const webserver = () => {
     })
 
     app.get('/confirm', (req, res) => {
-        // If user isn't supposed to be on this page (possible directory traversal)
-        if (req.signedCookies.preData === undefined) {
-            return res.redirect('/login')
-        }
-
-        // Check if user is wanting to do an email confirmation
-        if (req.query.token !== undefined) {
-            confirmEmail(req.query.token, (result) => {
-                if (result === false) {
-                    return res.render('confirmEmail', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
-                }
-
-                return res.render('confirmEmail', { notifs: 'OK_EMAIL_CONFIRMED', csrfToken: req.csrfToken() })
-            })
-        }
-
-        // Else give them the email confirmation page
-        return res.render('confirmEmail', { userEmailAddress: req.signedCookies.preData })
-    })
-
-    app.get('/login', (req, res) => {
-        res.render('login', { notifs: req.signedCookies.notifs, csrfToken: req.csrfToken() })
-    })
-
-    app.post('/login', (req, res) => {
-        const email = req.body.email.toLowerCase().replace(/\s+/g, '')
-        const password = req.body.password
-
-        loginAccount(email, password, (result) => {
-            if (result === false) {
-                log.info('Failed to login')
-                res.cookie('notifs', 'ERR_CREDS_INVALID', NotificationCookieOptions)
+        isLoggedin(req.signedCookies.sid, (result) => {
+            if (result === true) {
+                return res.redirect(config.genkan.redirect.afterLogin)
+            }
+            // If user isn't supposed to be on this page (possible directory traversal)
+            if (req.signedCookies.preData === undefined) {
                 return res.redirect('/login')
             }
 
-            log.info('Login OK')
-            res.cookie('sid', result, SessionCookieOptions)
-            return res.redirect(config.genkan.redirect.afterLogin)
+            // Check if user is wanting to do an email confirmation
+            if (req.query.token !== undefined) {
+                confirmEmail(req.query.token, (result) => {
+                    if (result === false) {
+                        return res.render('confirmEmail', { notifs: 'ERR_EMAIL_TOKEN_INVALID' })
+                    }
+
+                    return res.render('confirmEmail', { notifs: 'OK_EMAIL_CONFIRMED', csrfToken: req.csrfToken() })
+                })
+            }
+
+            // Else give them the email confirmation page
+            return res.render('confirmEmail', { userEmailAddress: req.signedCookies.preData })
+        })
+    })
+
+    app.get('/login', (req, res) => {
+        isLoggedin(req.signedCookies.sid, (result) => {
+            if (result === true) {
+                return res.redirect(config.genkan.redirect.afterLogin)
+            }
+            res.render('login', { notifs: req.signedCookies.notifs, csrfToken: req.csrfToken() })
+        })
+    })
+
+    app.post('/login', (req, res) => {
+        isLoggedin(req.signedCookies.sid, (result) => {
+            if (result === true) {
+                return res.redirect(config.genkan.redirect.afterLogin)
+            }
+            const email = req.body.email.toLowerCase().replace(/\s+/g, '')
+            const password = req.body.password
+
+            loginAccount(email, password, (result) => {
+                if (result === false) {
+                    log.info('Failed to login')
+                    res.cookie('notifs', 'ERR_CREDS_INVALID', NotificationCookieOptions)
+                    return res.redirect('/login')
+                }
+
+                log.info('Login OK')
+                res.cookie('sid', result, SessionCookieOptions)
+                return res.redirect(config.genkan.redirect.afterLogin)
+            })
         })
     })
 
     app.post('/logout', (req, res) => {
-        logoutAccount(req.cookies.sid, () => {
+        logoutAccount(req.signedCookies.sid, () => {
             res.clearCookie('sid', SessionCookieOptions)
         })
         return res.redirect(config.genkan.redirect.afterLogout)
