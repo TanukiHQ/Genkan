@@ -28,7 +28,7 @@ git clone https://github.com/HakkouHQ/Genkan.git
 ## Setup
 
 Install all necessary node modules with the following command. 
-The default theme for Genkan, [Uchi](https://github.com/HakkouHQ/genkan-theme-uchi), will be installed as well.
+The default theme for Genkan, [Uchi](https://github.com/TanukiHQ/genkan-theme-uchi), will be installed as well.
 
 ```
 npm i
